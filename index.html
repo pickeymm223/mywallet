@@ -191,28 +191,44 @@ function showScreen(id) {
     }, 500);
   }
 }
-// Copy seed words (global fallback)
+// Copy seed words (global fallback) - mobile-friendly
 function copySeed() {
   const words = [];
   document.querySelectorAll('#seedWords .seed-word').forEach(el => {
-    // Extract word text (remove number)
-    const text = el.textContent.replace(/^\d+/, '').trim();
+    const text = el.textContent.replace(/^[0-9]+/, '').trim();
     words.push(text);
   });
   const mnemonic = words.join(' ');
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(mnemonic).then(() => alert('ကူးယူပြီးပြီ!')).catch(() => {
-      // Fallback for older browsers
-      const ta = document.createElement('textarea');
-      ta.value = mnemonic;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      alert('ကူးယူပြီးပြီ!');
-    });
-  } else {
-    alert('Seed: ' + mnemonic);
+  // Use textarea method first (most reliable on mobile)
+  const ta = document.createElement('textarea');
+  ta.value = mnemonic;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  ta.style.top = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  ta.setSelectionRange(0, 99999); // For mobile
+  try {
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (ok) {
+      alert('ကူးယူပြီးပြီ! ✅');
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(mnemonic).then(() => alert('ကူးယူပြီးပြီ! ✅')).catch(() => alert('ကူးမရဘူး! စာရွက်ပေါ်ချရေးပါ'));
+    } else {
+      alert('ကူးမရဘူး! စာရွက်ပေါ်ချရေးပါ');
+    }
+  } catch (e) {
+    document.body.removeChild(ta);
+    // Try clipboard API as last resort
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(mnemonic).then(() => alert('ကူးယူပြီးပြီ! ✅')).catch(() => {
+        prompt('အောက်က စာသားကို ကိုယ်တိုင်ကူးပါ:', mnemonic);
+      });
+    } else {
+      prompt('အောက်က စာသားကို ကိုယ်တိုင်ကူးပါ:', mnemonic);
+    }
   }
 }
 
