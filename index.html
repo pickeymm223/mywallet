@@ -87,13 +87,28 @@ input:focus{outline:none;border-color:#667eea}
 <!-- Main -->
 <div id="screen-main" class="hidden">
 <div class="content">
-<h2>💰 My Wallet</h2>
-<div style="color:#8892b0;font-size:14px;margin-bottom:8px">👤 <span id="display-username"></span> <span style="background:#1a2332;padding:2px 8px;border-radius:8px;font-size:12px">ID: <span id="display-accid"></span></span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+<h2 style="margin:0">💰 My Wallet</h2>
+</div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+<span style="color:#8892b0;font-size:14px">👤 <span id="display-username"></span></span>
+<span style="background:#667eea;color:#fff;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600">UID: <span id="display-accid"></span></span>
+<button onclick="copyUid()" style="background:#1a2332;border:1px solid #2a3650;color:#8892b0;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer">📋</button>
+</div>
+<div class="card" style="text-align:center;padding:28px 20px">
+<div style="color:#8892b0;font-size:14px">Total Balance</div>
+<div style="font-size:44px;font-weight:700;margin:8px 0">$<span id="balance-total">0.00</span></div>
+<div style="color:#8892b0;font-size:13px">≈ <span id="balance-total-usdt">0.00</span> USDT</div>
+</div>
 <div class="card">
-<div style="color:#8892b0;font-size:14px">USDT Balance (Tron)</div>
-<div style="font-size:32px;font-weight:700;margin:8px 0" id="balance-tron">0.00</div>
-<div style="color:#8892b0;font-size:14px;margin-top:12px">USDT Balance (BSC)</div>
-<div style="font-size:24px;font-weight:700;margin:8px 0" id="balance-bsc">0.00</div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1f2937">
+<div><div style="font-weight:600">🔴 Tron</div><div style="color:#8892b0;font-size:13px">TRC20</div></div>
+<div style="text-align:right"><div style="font-weight:700" id="balance-tron">0.00</div><div style="color:#8892b0;font-size:13px">USDT</div></div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+<div><div style="font-weight:600">🟡 BSC</div><div style="color:#8892b0;font-size:13px">BEP20</div></div>
+<div style="text-align:right"><div style="font-weight:700" id="balance-bsc">0.00</div><div style="color:#8892b0;font-size:13px">USDT</div></div>
+</div>
 </div>
 
 <div class="card">
@@ -264,14 +279,31 @@ async function loadBalances() {
     document.getElementById('display-username').textContent = localStorage.getItem('mw_username') || '';
     document.getElementById('display-accid').textContent = localStorage.getItem('mw_acc_id') || '';
     const data = await api('/api/balance');
+    let total = 0;
     for (const b of data.balances) {
+      const amt = parseFloat(b.amount);
+      total += amt;
       const el = document.getElementById('balance-' + b.chain);
-      if (el) el.textContent = parseFloat(b.amount).toFixed(2);
+      if (el) el.textContent = amt.toFixed(2);
     }
+    document.getElementById('balance-total').textContent = total.toFixed(2);
+    document.getElementById('balance-total-usdt').textContent = total.toFixed(2);
     loadDepositAddress();
   } catch (e) {
     if (e.message.includes('Login')) showScreen('screen-welcome');
   }
+}
+
+function copyUid() {
+  const uid = localStorage.getItem('mw_acc_id') || '';
+  const ta = document.createElement('textarea');
+  ta.value = uid;
+  ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); toast('UID ကူးယူပြီးပြီ! ✅'); }
+  catch (e) { toast('UID: ' + uid); }
+  document.body.removeChild(ta);
 }
 
 async function loadDepositAddress() {
