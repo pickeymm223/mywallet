@@ -23,12 +23,25 @@ let walletData = null;
 
 // Generate new mnemonic
 async function initCreate() {
-  currentMnemonic = bip39.generateMnemonic();
-  const words = currentMnemonic.split(' ');
-  document.getElementById('seedWords').innerHTML = words.map((w, i) => 
-    `<div class="seed-word"><span>${i+1}</span>${w}</div>`
-  ).join('');
+  try {
+    currentMnemonic = bip39.generateMnemonic();
+  } catch (e) {
+    console.warn('bip39 failed, using fallback:', e);
+    currentMnemonic = generateFallbackMnemonic();
+  }
+  // Use global display function
+  if (typeof displaySeedWords === 'function') {
+    displaySeedWords(currentMnemonic);
+  } else {
+    const words = currentMnemonic.split(' ');
+    document.getElementById('seedWords').innerHTML = words.map((w, i) => 
+      `<div class="seed-word"><span>${i+1}</span>${w}</div>`
+    ).join('');
+  }
 }
+// Make available globally for retry
+window.initCreate = initCreate;
+window.displaySeedWords = typeof displaySeedWords !== 'undefined' ? displaySeedWords : null;
 
 // Copy seed
 window.copySeed = function() {

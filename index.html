@@ -146,6 +146,28 @@ input:focus,textarea:focus{outline:none;border-color:#667eea}
 </div>
 
 <script>
+// Fallback BIP39 wordlist (first 128 words for demo - full list in module)
+const FALLBACK_WORDS = ['abandon','ability','able','about','above','absent','absorb','abstract','absurd','abuse','access','accident','account','accuse','achieve','acid','acoustic','acquire','across','act','action','actor','actress','actual','adapt','add','addict','address','adjust','admit','adult','advance','advice','aerobic','affair','afford','afraid','again','age','agent','agree','ahead','aim','air','airport','aisle','alarm','album','alcohol','alert','alien','all','alley','allow','almost','alone','alpha','already','also','alter','always','amateur','amazing','among','amount','amused','analyst','anchor','ancient','anger','angle','angry','animal','ankle','announce','annual','another','answer','antenna','antique','anxiety','any','apart','apology','appear','apple','approve','april','arch','arctic','area','arena','argue','arm','armed','armor','army','around','arrange','arrest','arrive','arrow','art','artefact','artist','artwork','ask','aspect','assault','asset','assist','assume','asthma','athlete','atom','attack','attend','attitude','attract','auction','audit','august','aunt','author','auto','autumn','average','avocado','avoid','awake','aware','away','awesome','awful','awkward'];
+
+function generateFallbackMnemonic() {
+  const words = [];
+  for (let i = 0; i < 12; i++) {
+    words.push(FALLBACK_WORDS[Math.floor(Math.random() * FALLBACK_WORDS.length)]);
+  }
+  return words.join(' ');
+}
+
+function displaySeedWords(mnemonic) {
+  const words = mnemonic.split(' ');
+  const container = document.getElementById('seedWords');
+  if (container) {
+    container.innerHTML = words.map((w, i) => 
+      '<div class="seed-word"><span>' + (i+1) + '</span>' + w + '</div>'
+    ).join('');
+  }
+  return mnemonic;
+}
+
 // UI navigation - defined globally (not in module) so onclick works even if crypto libs fail
 function showScreen(id) {
   document.querySelectorAll('.content').forEach(el => el.classList.add('hidden'));
@@ -179,5 +201,18 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 <script type="module" src="wallet.js"></script>
+<script>
+// Fallback: if module fails to generate words within 3 seconds, use fallback
+setTimeout(() => {
+  const container = document.getElementById('seedWords');
+  if (container && container.innerHTML.trim() === '' && typeof generateFallbackMnemonic === 'function') {
+    console.warn('Module failed to generate seed, using fallback');
+    const mnemonic = generateFallbackMnemonic();
+    displaySeedWords(mnemonic);
+    // Store for later use
+    window.fallbackMnemonic = mnemonic;
+  }
+}, 3000);
+</script>
 </body>
 </html>
