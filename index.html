@@ -170,10 +170,16 @@ function displaySeedWords(mnemonic) {
 
 // UI navigation - defined globally (not in module) so onclick works even if crypto libs fail
 function showScreen(id) {
-  document.querySelectorAll('.content').forEach(el => el.classList.add('hidden'));
+  // Hide all top-level screens
+  document.querySelectorAll('#screen-welcome, #screen-create, #screen-confirm, #screen-import, #screen-password, #screen-send, #screen-receive, #screen-settings').forEach(el => el.classList.add('hidden'));
   document.getElementById('screen-main').classList.add('hidden');
   const el = document.getElementById(id);
   el.classList.remove('hidden');
+  // If showing main, ensure its inner content is visible
+  if (id === 'screen-main') {
+    const inner = el.querySelector('.content');
+    if (inner) inner.classList.remove('hidden');
+  }
   window.scrollTo(0, 0);
   // If showing create screen and words are empty, generate fallback
   if (id === 'screen-create') {
