@@ -145,21 +145,58 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 <div class="section">
 <div class="section-title">Assets</div>
 <div class="card">
-<div class="asset-row" onclick="openAsset('tron')">
+<div class="asset-row" onclick="openAsset('tron', 'USDT')">
 <div class="asset-logo-wrap">
 <img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png" alt="USDT" onerror="this.style.display='none'">
 <span class="asset-net-badge">🔴</span>
 </div>
 <div class="asset-info"><div class="asset-name">USDT</div><div class="asset-net">Tron • TRC20</div></div>
-<div class="asset-bal"><div class="asset-amt" id="balance-tron">0.00</div><div class="asset-usd">$<span id="usd-tron">0.00</span></div></div>
+<div class="asset-bal"><div class="asset-amt" id="balance-tron-USDT">0.00</div><div class="asset-usd">$<span id="usd-tron-USDT">0.00</span></div></div>
 </div>
-<div class="asset-row" onclick="openAsset('bsc')">
+<div class="asset-row" onclick="openAsset('tron', 'TRX')">
+<div class="asset-logo-wrap">
+<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/trx.png" alt="TRX" onerror="this.style.display='none'">
+<span class="asset-net-badge">🔴</span>
+</div>
+<div class="asset-info"><div class="asset-name">Tron</div><div class="asset-net">TRX • Native</div></div>
+<div class="asset-bal"><div class="asset-amt" id="balance-tron-TRX">0.00</div><div class="asset-usd">$<span id="usd-tron-TRX">0.00</span></div></div>
+</div>
+<div class="asset-row" onclick="openAsset('bsc', 'USDT')">
 <div class="asset-logo-wrap">
 <img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png" alt="USDT" onerror="this.style.display='none'">
 <span class="asset-net-badge">🟡</span>
 </div>
 <div class="asset-info"><div class="asset-name">USDT</div><div class="asset-net">BSC • BEP20</div></div>
-<div class="asset-bal"><div class="asset-amt" id="balance-bsc">0.00</div><div class="asset-usd">$<span id="usd-bsc">0.00</span></div></div>
+<div class="asset-bal"><div class="asset-amt" id="balance-bsc-USDT">0.00</div><div class="asset-usd">$<span id="usd-bsc-USDT">0.00</span></div></div>
+</div>
+<div class="asset-row" onclick="openAsset('bsc', 'BNB')">
+<div class="asset-logo-wrap">
+<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/bnb.png" alt="BNB" onerror="this.style.display='none'">
+<span class="asset-net-badge">🟡</span>
+</div>
+<div class="asset-info"><div class="asset-name">BNB</div><div class="asset-net">BSC • Native</div></div>
+<div class="asset-bal"><div class="asset-amt" id="balance-bsc-BNB">0.00</div><div class="asset-usd">$<span id="usd-bsc-BNB">0.00</span></div></div>
+</div>
+<div class="asset-row" style="opacity:.5">
+<div class="asset-logo-wrap">
+<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/btc.png" alt="BTC" onerror="this.style.display='none'">
+</div>
+<div class="asset-info"><div class="asset-name">Bitcoin</div><div class="asset-net">BTC • Coming soon</div></div>
+<div class="asset-bal"><div class="asset-amt">-</div></div>
+</div>
+<div class="asset-row" style="opacity:.5">
+<div class="asset-logo-wrap">
+<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/eth.png" alt="ETH" onerror="this.style.display='none'">
+</div>
+<div class="asset-info"><div class="asset-name">Ethereum</div><div class="asset-net">ETH • Coming soon</div></div>
+<div class="asset-bal"><div class="asset-amt">-</div></div>
+</div>
+<div class="asset-row" style="opacity:.5">
+<div class="asset-logo-wrap">
+<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/ton.png" alt="TON" onerror="this.style.display='none'">
+</div>
+<div class="asset-info"><div class="asset-name">Toncoin</div><div class="asset-net">TON • Coming soon</div></div>
+<div class="asset-bal"><div class="asset-amt">-</div></div>
 </div>
 </div>
 </div>
@@ -183,6 +220,44 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 <div class="nav-item active" onclick="showScreen('screen-main')"><span class="ico">💰</span>Wallet</div>
 <div class="nav-item" onclick="showScreen('screen-transfer')"><span class="ico">📤</span>လွှဲမယ်</div>
 <div class="nav-item" onclick="showScreen('screen-history')"><span class="ico">📜</span>မှတ်တမ်း</div>
+<div class="nav-item" onclick="showScreen('screen-profile')"><span class="ico">👤</span>Profile</div>
+</div>
+</div>
+
+<!-- Profile -->
+<div id="screen-profile" class="hidden">
+<div class="header">
+<h1>👤 Profile</h1>
+<span></span>
+</div>
+<div class="content">
+<div style="padding:20px;text-align:center">
+<div style="font-size:64px;margin-bottom:12px">👤</div>
+<div style="font-size:20px;font-weight:700" id="profile-username"></div>
+<div class="hint">MyWallet User</div>
+</div>
+<div class="section">
+<div class="section-title">Account</div>
+<div class="card">
+<div class="asset-row" onclick="copyProfileUid()">
+<div class="asset-info"><div class="asset-name">UID</div><div class="asset-net">နှိပ်ပြီး ကူးယူမယ်</div></div>
+<div class="asset-bal"><div class="asset-amt" id="profile-uid" style="color:var(--accent)"></div></div>
+</div>
+<div class="asset-row">
+<div class="asset-info"><div class="asset-name">Username</div></div>
+<div class="asset-bal"><div class="asset-amt" id="profile-username2"></div></div>
+</div>
+</div>
+</div>
+<div class="section">
+<button class="btn btn-secondary" onclick="doLogout()">🚪 Logout</button>
+</div>
+</div>
+<div class="nav">
+<div class="nav-item" onclick="showScreen('screen-main')"><span class="ico">💰</span>Wallet</div>
+<div class="nav-item" onclick="showScreen('screen-transfer')"><span class="ico">📤</span>လွှဲမယ်</div>
+<div class="nav-item" onclick="showScreen('screen-history')"><span class="ico">📜</span>မှတ်တမ်း</div>
+<div class="nav-item active" onclick="showScreen('screen-profile')"><span class="ico">👤</span>Profile</div>
 </div>
 </div>
 
@@ -293,7 +368,7 @@ function customConfirm(msg) {
 }
 
 function showScreen(id) {
-  ['screen-welcome','screen-register','screen-main','screen-transfer','screen-withdraw','screen-history'].forEach(s => {
+  ['screen-welcome','screen-register','screen-main','screen-transfer','screen-withdraw','screen-history','screen-profile'].forEach(s => {
     document.getElementById(s).classList.add('hidden');
   });
   document.getElementById(id).classList.remove('hidden');
@@ -302,7 +377,26 @@ function showScreen(id) {
     loadBalances();
   }
   if (id === 'screen-history') loadHistory();
+  if (id === 'screen-profile') loadProfile();
   window.scrollTo(0, 0);
+}
+
+function loadProfile() {
+  document.getElementById('profile-username').textContent = localStorage.getItem('mw_username') || '';
+  document.getElementById('profile-username2').textContent = localStorage.getItem('mw_username') || '';
+  document.getElementById('profile-uid').textContent = localStorage.getItem('mw_acc_id') || '';
+}
+
+function copyProfileUid() {
+  const uid = localStorage.getItem('mw_acc_id') || '';
+  const ta = document.createElement('textarea');
+  ta.value = uid;
+  ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); toast('UID ကူးယူပြီးပြီ! ✅'); }
+  catch (e) { toast('UID: ' + uid); }
+  document.body.removeChild(ta);
 }
 
 function setMode(mode) {
@@ -368,10 +462,11 @@ async function loadBalances() {
     let total = 0;
     for (const b of data.balances) {
       const amt = parseFloat(b.amount);
-      total += amt;
-      const el = document.getElementById('balance-' + b.chain);
+      // Only count USDT towards USD total (TRX/BNB need price feed)
+      if (b.currency === 'USDT') total += amt;
+      const el = document.getElementById(`balance-${b.chain}-${b.currency}`);
       if (el) el.textContent = amt.toFixed(2);
-      const usdEl = document.getElementById('usd-' + b.chain);
+      const usdEl = document.getElementById(`usd-${b.chain}-${b.currency}`);
       if (usdEl) usdEl.textContent = amt.toFixed(2);
     }
     document.getElementById('balance-total').textContent = total.toFixed(2);
@@ -454,14 +549,18 @@ async function loadHistory() {
 }
 
 let currentAssetChain = 'tron';
+let currentAssetCurrency = 'USDT';
 let currentAssetAddress = '';
 
-async function openAsset(chain) {
+async function openAsset(chain, currency = 'USDT') {
   currentAssetChain = chain;
+  currentAssetCurrency = currency;
   const names = { tron: 'Tron • TRC20', bsc: 'BSC • BEP20' };
   document.getElementById('asset-modal-network').textContent = names[chain] || chain;
-  const balEl = document.getElementById('balance-' + chain);
+  document.querySelector('#asset-modal h1').textContent = currency;
+  const balEl = document.getElementById(`balance-${chain}-${currency}`);
   document.getElementById('asset-modal-balance').textContent = balEl ? balEl.textContent : '0.00';
+  document.querySelector('#asset-modal .hero-balance span:last-child').textContent = currency;
   document.getElementById('asset-modal-address').textContent = 'Loading...';
   document.getElementById('asset-modal-qr').src = '';
   document.getElementById('asset-modal').classList.remove('hidden');
