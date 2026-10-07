@@ -9,71 +9,67 @@
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0b0e11;--card:#12161c;--border:#1e2329;--text:#eaecef;--muted:#848e9c;--accent:#f0b90b;--green:#0ecb81;--red:#f6465d}
+:root{--bg:#10141f;--card:#1a2030;--border:#232b3d;--text:#fff;--muted:#8a94a6;--accent:#2e86ff;--green:#0ecb81;--red:#f6465d}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 .container{max-width:480px;margin:0 auto;min-height:100vh}
 .hidden{display:none!important}
-/* Header */
-.header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
-.header h1{font-size:20px;font-weight:700}
-.user-chip{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:6px 12px;font-size:13px}
-.user-chip .uid{background:var(--accent);color:#000;font-weight:700;padding:2px 8px;border-radius:12px;font-size:12px}
-/* Balance hero */
-.hero{padding:24px 20px;text-align:left}
-.hero-label{color:var(--muted);font-size:14px;margin-bottom:4px}
-.hero-balance{font-size:40px;font-weight:700;letter-spacing:-1px}
-.hero-sub{color:var(--muted);font-size:13px;margin-top:4px}
-/* Quick actions */
-.actions{display:flex;gap:12px;padding:0 20px;margin-bottom:20px}
-.action-btn{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 8px;text-align:center;cursor:pointer;color:var(--text)}
-.action-btn:active{background:#1a1f26}
-.action-btn .ico{font-size:22px;display:block;margin-bottom:6px}
-.action-btn .lbl{font-size:12px;color:var(--muted)}
-/* Section */
-.section{padding:0 20px;margin-bottom:20px}
-.section-title{font-size:16px;font-weight:600;margin-bottom:12px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
-.asset-row{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer}
-.asset-row:last-child{border:none}
-.asset-row:active{background:#1a1f26}
-.asset-logo-wrap{position:relative;width:32px;height:32px;margin-right:12px;flex-shrink:0}
-.asset-logo{width:32px;height:32px;border-radius:50%}
-.asset-net-badge{position:absolute;bottom:-2px;right:-2px;width:14px;height:14px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px}
-/* Asset detail modal */
-#asset-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:9997;overflow-y:auto}
-#asset-modal .header{position:sticky;top:0;background:var(--bg)}
-.qr-wrap{text-align:center;padding:24px}
-.qr-wrap img{width:200px;height:200px;border-radius:16px;background:#fff;padding:8px}
+.header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.wallet-sel{display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px}
+.wallet-sel .uid{background:var(--accent);color:#fff;font-weight:700;padding:2px 8px;border-radius:12px;font-size:11px;cursor:pointer}
+.header-icons{display:flex;gap:16px;font-size:18px;color:var(--muted)}
+.balance-sec{text-align:center;padding:4px 0 16px}
+.balance-net{color:var(--muted);font-size:12px;margin-bottom:4px}
+.balance-amt{font-size:36px;font-weight:700;letter-spacing:-.5px}
+.balance-chg{color:var(--green);font-size:13px;margin-top:4px}
+.actions{display:flex;justify-content:center;gap:4px;padding:0 16px;margin-bottom:20px}
+.act-btn{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;flex:1;max-width:76px;background:none;border:none;color:var(--text)}
+.act-circle{width:52px;height:52px;border-radius:50%;background:#1c2333;display:flex;align-items:center;justify-content:center;font-size:20px}
+.act-btn:active .act-circle{background:#242e45}
+.act-lbl{font-size:12px}
+.tabs{display:flex;gap:24px;padding:0 16px;margin-bottom:4px}
+.tab{padding:10px 0;font-size:15px;color:var(--muted);cursor:pointer;font-weight:500;border-bottom:2px solid transparent}
+.tab.active{color:var(--text);font-weight:600;border-bottom-color:var(--text)}
+.assets-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px}
+.assets-head .t{font-size:15px;font-weight:600}
+.assets-head .m{color:var(--muted);font-size:13px}
+.asset-row{display:flex;align-items:center;padding:12px 16px;cursor:pointer}
+.asset-row:active{background:#161c2a}
+.asset-logo-wrap{position:relative;width:36px;height:36px;margin-right:12px;flex-shrink:0}
+.asset-logo{width:36px;height:36px;border-radius:50%}
+.asset-net-badge{position:absolute;bottom:-2px;right:-2px;width:15px;height:15px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:9px;border:1px solid var(--border)}
 .asset-info{flex:1}
 .asset-name{font-weight:600;font-size:15px}
-.asset-net{color:var(--muted);font-size:12px}
+.asset-chg{font-size:12px;color:var(--green)}
 .asset-bal{text-align:right}
-.asset-amt{font-weight:700;font-size:15px}
-.asset-usd{color:var(--muted);font-size:12px}
-/* Forms */
+.asset-usd{font-weight:600;font-size:15px}
+.asset-amt{color:var(--muted);font-size:12px}
+.asset-disabled{opacity:.45}
 input,select{width:100%;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:16px;margin-bottom:12px}
 input:focus,select:focus{outline:none;border-color:var(--accent)}
 .btn{display:block;width:100%;padding:15px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px}
 .btn:active{opacity:.9}
-.btn-primary{background:var(--accent);color:#000}
+.btn-primary{background:var(--accent);color:#fff}
 .btn-secondary{background:var(--card);color:var(--text);border:1px solid var(--border)}
-.addr-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;word-break:break-all;font-family:monospace;font-size:12px;margin:12px 0;color:var(--muted)}
+.addr-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;word-break:break-all;font-family:monospace;font-size:12px;margin:12px 0;color:var(--muted)}
 .hint{color:var(--muted);font-size:13px;line-height:1.5;margin-top:8px}
-/* Toast */
-#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:#1a2332;border:1px solid var(--accent);color:#fff;padding:14px 20px;border-radius:12px;font-size:15px;z-index:9999;max-width:90%;text-align:center;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.section{padding:0 16px;margin-bottom:20px}
+.section-title{font-size:16px;font-weight:600;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:#1a2332;border:1px solid var(--accent);color:#fff;padding:14px 20px;border-radius:12px;font-size:15px;z-index:9999;max-width:90%;text-align:center;transition:transform .3s}
 #toast.show{transform:translateX(-50%) translateY(0)}
 #toast.error{border-color:var(--red)}
-/* Confirm modal */
 #confirm-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9998;padding:20px}
 #confirm-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:400px;width:100%;text-align:center}
 #confirm-msg{margin-bottom:20px;line-height:1.5}
-/* Bottom nav */
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;max-width:480px;margin:0 auto;z-index:100}
-.nav-item{flex:1;padding:12px;text-align:center;color:var(--muted);font-size:11px;cursor:pointer}
-.nav-item.active{color:var(--accent)}
-.nav-item .ico{font-size:20px;display:block;margin-bottom:2px}
-.content{padding-bottom:80px}
-/* Login */
+#asset-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:9997;overflow-y:auto}
+.qr-wrap{text-align:center;padding:24px}
+.qr-wrap img{width:200px;height:200px;border-radius:16px;background:#fff;padding:8px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);display:flex;max-width:480px;margin:0 auto;z-index:100;padding:8px 16px;align-items:center}
+.nav-item{flex:1;text-align:center;color:var(--muted);font-size:11px;cursor:pointer}
+.nav-item.active{color:var(--text)}
+.nav-item .ico{font-size:22px;display:block;margin-bottom:2px}
+.nav-swap{width:52px;height:52px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;cursor:pointer;margin:0 8px}
+.content{padding-bottom:90px}
 .login-wrap{padding:40px 20px;text-align:center}
 .login-logo{font-size:48px;margin-bottom:12px}
 .login-title{font-size:28px;font-weight:700;margin-bottom:8px}
@@ -86,7 +82,6 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 <body>
 <div class="container">
 
-<!-- Login -->
 <div id="screen-welcome">
 <div class="login-wrap">
 <div class="login-logo">💰</div>
@@ -103,141 +98,122 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 <button class="btn btn-secondary" onclick="showScreen('screen-register')">Account အသစ် ဖွင့်မယ်</button>
 </div>
 <div id="noncustodial-form" class="hidden">
-<p class="hint" style="margin-bottom:16px">Seed phrase နဲ့ wallet (non-custodial)</p>
+<p class="hint" style="margin-bottom:16px">Seed phrase နဲ့ wallet</p>
 <button class="btn btn-primary" onclick="location.href='noncustodial.html'">Seed Wallet ဖွင့်မယ်</button>
 </div>
 </div>
 </div>
 
-<!-- Register -->
 <div id="screen-register" class="hidden">
 <div style="padding:20px">
 <h2 style="margin-bottom:20px">Account အသစ်</h2>
-<input id="reg-username" placeholder="Username (3+ လုံး)" autocomplete="username">
-<input id="reg-password" type="password" placeholder="Password (6+ လုံး)" autocomplete="new-password">
-<input id="reg-password2" type="password" placeholder="Password အတည်ပြုပါ" autocomplete="new-password">
+<input id="reg-username" placeholder="Username (3+ လုံး)">
+<input id="reg-password" type="password" placeholder="Password (6+ လုံး)">
+<input id="reg-password2" type="password" placeholder="Password အတည်ပြုပါ">
 <button class="btn btn-primary" onclick="doRegister()">ဖွင့်မယ်</button>
 <button class="btn btn-secondary" onclick="showScreen('screen-welcome')">← နောက်သို့</button>
 </div>
 </div>
 
-<!-- Main -->
 <div id="screen-main" class="hidden">
 <div class="header">
-<h1>MyWallet</h1>
-<div class="user-chip">
-<span id="display-username"></span>
-<span class="uid">UID <span id="display-accid"></span></span>
+<div class="wallet-sel">
+<span>💰</span><span id="display-username"></span>
+<span class="uid" onclick="copyUid()" title="နှိပ်ပြီး ကူးယူ">UID <span id="display-accid"></span></span>
 </div>
+<div class="header-icons"><span>⛶</span><span>◷</span><span>⚙</span></div>
 </div>
 <div class="content">
-<div class="hero">
-<div class="hero-label">Total Balance (USD)</div>
-<div class="hero-balance">$<span id="balance-total">0.00</span></div>
-<div class="hero-sub">≈ <span id="balance-total-usdt">0.00</span> USDT</div>
+<div class="balance-sec">
+<div class="balance-net">All Mainnets ▾</div>
+<div class="balance-amt">$<span id="balance-total">0.00</span></div>
+<div class="balance-chg" id="balance-chg">+$0.00 · +0.00%</div>
 </div>
 <div class="actions">
-<div class="action-btn" onclick="showScreen('screen-transfer')"><span class="ico">📤</span><span class="lbl">လွှဲမယ်</span></div>
-<div class="action-btn" onclick="document.getElementById('deposit-section').scrollIntoView({behavior:'smooth'})"><span class="ico">📥</span><span class="lbl">သွင်းမယ်</span></div>
-<div class="action-btn" onclick="showScreen('screen-withdraw')"><span class="ico">🏦</span><span class="lbl">ထုတ်မယ်</span></div>
-<div class="action-btn" onclick="showScreen('screen-history')"><span class="ico">📜</span><span class="lbl">မှတ်တမ်း</span></div>
+<button class="act-btn" onclick="toast('Coming soon')"><span class="act-circle">⊕</span><span class="act-lbl">Buy</span></button>
+<button class="act-btn" onclick="showScreen('screen-transfer')"><span class="act-circle">↗</span><span class="act-lbl">Send</span></button>
+<button class="act-btn" onclick="document.getElementById('assets-sec').scrollIntoView({behavior:'smooth'})"><span class="act-circle">↙</span><span class="act-lbl">Receive</span></button>
+<button class="act-btn" onclick="toast('Coming soon')"><span class="act-circle">🌱</span><span class="act-lbl">Earn</span></button>
 </div>
-<div class="section">
-<div class="section-title">Assets</div>
-<div class="card">
-<div class="asset-row" onclick="openAsset('tron', 'USDT')">
-<div class="asset-logo-wrap">
-<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png" alt="USDT" onerror="this.style.display='none'">
-<span class="asset-net-badge">🔴</span>
+<div class="tabs">
+<div class="tab active">Crypto</div>
+<div class="tab" onclick="toast('Coming soon')">Earn</div>
+<div class="tab" onclick="toast('Coming soon')">NFTs</div>
 </div>
-<div class="asset-info"><div class="asset-name">USDT</div><div class="asset-net">Tron • TRC20</div></div>
-<div class="asset-bal"><div class="asset-amt" id="balance-tron-USDT">0.00</div><div class="asset-usd">$<span id="usd-tron-USDT">0.00</span></div></div>
+<div id="assets-sec">
+<div class="assets-head"><span class="t">Your Assets</span><span class="m">Manage ⚙</span></div>
+<div id="asset-list"></div>
 </div>
-<div class="asset-row" onclick="openAsset('tron', 'TRX')">
-<div class="asset-logo-wrap">
-<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/trx.png" alt="TRX" onerror="this.style.display='none'">
-<span class="asset-net-badge">🔴</span>
-</div>
-<div class="asset-info"><div class="asset-name">Tron</div><div class="asset-net">TRX • Native</div></div>
-<div class="asset-bal"><div class="asset-amt" id="balance-tron-TRX">0.00</div><div class="asset-usd">$<span id="usd-tron-TRX">0.00</span></div></div>
-</div>
-<div class="asset-row" onclick="openAsset('bsc', 'USDT')">
-<div class="asset-logo-wrap">
-<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png" alt="USDT" onerror="this.style.display='none'">
-<span class="asset-net-badge">🟡</span>
-</div>
-<div class="asset-info"><div class="asset-name">USDT</div><div class="asset-net">BSC • BEP20</div></div>
-<div class="asset-bal"><div class="asset-amt" id="balance-bsc-USDT">0.00</div><div class="asset-usd">$<span id="usd-bsc-USDT">0.00</span></div></div>
-</div>
-<div class="asset-row" onclick="openAsset('bsc', 'BNB')">
-<div class="asset-logo-wrap">
-<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/bnb.png" alt="BNB" onerror="this.style.display='none'">
-<span class="asset-net-badge">🟡</span>
-</div>
-<div class="asset-info"><div class="asset-name">BNB</div><div class="asset-net">BSC • Native</div></div>
-<div class="asset-bal"><div class="asset-amt" id="balance-bsc-BNB">0.00</div><div class="asset-usd">$<span id="usd-bsc-BNB">0.00</span></div></div>
-</div>
-<div class="asset-row" onclick="openAsset('btc', 'BTC')">
-<div class="asset-logo-wrap">
-<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/btc.png" alt="BTC" onerror="this.style.display='none'">
-</div>
-<div class="asset-info"><div class="asset-name">Bitcoin</div><div class="asset-net">BTC • Native</div></div>
-<div class="asset-bal"><div class="asset-amt" id="balance-btc-BTC">0.00</div><div class="asset-usd">$<span id="usd-btc-BTC">0.00</span></div></div>
-</div>
-<div class="asset-row" onclick="openAsset('eth', 'ETH')">
-<div class="asset-logo-wrap">
-<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/eth.png" alt="ETH" onerror="this.style.display='none'">
-</div>
-<div class="asset-info"><div class="asset-name">Ethereum</div><div class="asset-net">ETH • Native</div></div>
-<div class="asset-bal"><div class="asset-amt" id="balance-eth-ETH">0.00</div><div class="asset-usd">$<span id="usd-eth-ETH">0.00</span></div></div>
-</div>
-<div class="asset-row" onclick="openAsset('eth', 'USDT')">
-<div class="asset-logo-wrap">
-<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png" alt="USDT" onerror="this.style.display='none'">
-<span class="asset-net-badge">🔵</span>
-</div>
-<div class="asset-info"><div class="asset-name">USDT</div><div class="asset-net">ETH • ERC20</div></div>
-<div class="asset-bal"><div class="asset-amt" id="balance-eth-USDT">0.00</div><div class="asset-usd">$<span id="usd-eth-USDT">0.00</span></div></div>
-</div>
-<div class="asset-row" style="opacity:.5">
-<div class="asset-logo-wrap">
-<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/ton.png" alt="TON" onerror="this.style.display='none'">
-</div>
-<div class="asset-info"><div class="asset-name">Toncoin</div><div class="asset-net">TON • Coming soon</div></div>
-<div class="asset-bal"><div class="asset-amt">-</div></div>
-</div>
-</div>
-</div>
-<div class="section" id="deposit-section">
+<div class="section" style="margin-top:20px">
 <div class="section-title">📥 ငွေသွင်းမယ်</div>
 <div class="card">
 <select id="deposit-chain" onchange="loadDepositAddress()">
 <option value="tron">Tron (TRC20)</option>
 <option value="bsc">BSC (BEP20)</option>
+<option value="btc">Bitcoin</option>
+<option value="eth">Ethereum (ERC20)</option>
 </select>
 <div class="addr-box" id="deposit-address">Loading...</div>
-<button class="btn btn-secondary" onclick="copyDepositAddress()">📋 လိပ်စာကူးယူမယ်</button>
-<p class="hint">အထက်ပါ လိပ်စာကို USDT လွှဲထည့်ပါ</p>
+<button class="btn btn-secondary" onclick="copyDepositAddress()">📋 ကူးယူမယ်</button>
 </div>
-</div>
-<div class="section">
-<button class="btn btn-secondary" onclick="doLogout()">🚪 Logout</button>
 </div>
 </div>
 <div class="nav">
-<div class="nav-item active" onclick="showScreen('screen-main')"><span class="ico">💰</span>Wallet</div>
-<div class="nav-item" onclick="showScreen('screen-transfer')"><span class="ico">📤</span>လွှဲမယ်</div>
-<div class="nav-item" onclick="showScreen('screen-history')"><span class="ico">📜</span>မှတ်တမ်း</div>
+<div class="nav-item active"><span class="ico">🏠</span>Home</div>
+<div class="nav-item" onclick="showScreen('screen-history')"><span class="ico">📜</span>History</div>
+<div class="nav-swap" onclick="showScreen('screen-transfer')">⇄</div>
 <div class="nav-item" onclick="showScreen('screen-profile')"><span class="ico">👤</span>Profile</div>
+<div class="nav-item" onclick="doLogout()"><span class="ico">🚪</span>Logout</div>
 </div>
 </div>
 
-<!-- Profile -->
-<div id="screen-profile" class="hidden">
-<div class="header">
-<h1>👤 Profile</h1>
-<span></span>
+<div id="screen-transfer" class="hidden">
+<div style="padding:20px">
+<h2 style="margin-bottom:20px">Send <span style="color:var(--green);font-size:14px">Free</span></h2>
+<input id="transfer-to" placeholder="Username သို့မဟုတ် UID">
+<select id="transfer-chain">
+<option value="tron">Tron (TRC20)</option>
+<option value="bsc">BSC (BEP20)</option>
+<option value="btc">Bitcoin</option>
+<option value="eth">Ethereum</option>
+</select>
+<select id="transfer-currency">
+<option value="USDT">USDT</option>
+<option value="TRX">TRX</option>
+<option value="BNB">BNB</option>
+<option value="BTC">BTC</option>
+<option value="ETH">ETH</option>
+</select>
+<input id="transfer-amount" type="number" placeholder="ပမာဏ" min="0" step="any">
+<button class="btn btn-primary" onclick="doTransfer()">လွှဲမယ် (Free)</button>
+<button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
 </div>
+</div>
+
+<div id="screen-withdraw" class="hidden">
+<div style="padding:20px">
+<h2 style="margin-bottom:20px">🏦 အပြင်ထုတ်မယ်</h2>
+<select id="withdraw-chain">
+<option value="tron">Tron (fee: 2 USDT)</option>
+<option value="bsc">BSC (fee: 1 USDT)</option>
+</select>
+<input id="withdraw-address" placeholder="လိပ်စာ">
+<input id="withdraw-amount" type="number" placeholder="USDT ပမာဏ" min="0" step="any">
+<button class="btn btn-primary" onclick="doWithdraw()">ထုတ်မယ်</button>
+<button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
+</div>
+</div>
+
+<div id="screen-history" class="hidden">
+<div style="padding:20px">
+<h2 style="margin-bottom:20px">📜 မှတ်တမ်း</h2>
+<div id="history-list"></div>
+<button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
+</div>
+</div>
+
+<div id="screen-profile" class="hidden">
+<div class="header"><h1 style="font-size:18px">👤 Profile</h1><span></span></div>
 <div class="content">
 <div style="padding:20px;text-align:center">
 <div style="font-size:64px;margin-bottom:12px">👤</div>
@@ -261,78 +237,30 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 <button class="btn btn-secondary" onclick="doLogout()">🚪 Logout</button>
 </div>
 </div>
-<div class="nav">
-<div class="nav-item" onclick="showScreen('screen-main')"><span class="ico">💰</span>Wallet</div>
-<div class="nav-item" onclick="showScreen('screen-transfer')"><span class="ico">📤</span>လွှဲမယ်</div>
-<div class="nav-item" onclick="showScreen('screen-history')"><span class="ico">📜</span>မှတ်တမ်း</div>
-<div class="nav-item active" onclick="showScreen('screen-profile')"><span class="ico">👤</span>Profile</div>
-</div>
-</div>
-
-<!-- Transfer -->
-<div id="screen-transfer" class="hidden">
-<div style="padding:20px">
-<h2 style="margin-bottom:20px">👥 အချင်းချင်း လွှဲမယ် <span style="color:var(--green);font-size:14px">Free</span></h2>
-<input id="transfer-to" placeholder="Username သို့မဟုတ် UID">
-<select id="transfer-chain">
-<option value="tron">Tron (TRC20)</option>
-<option value="bsc">BSC (BEP20)</option>
-</select>
-<input id="transfer-amount" type="number" placeholder="USDT ပမာဏ" min="0" step="0.01">
-<button class="btn btn-primary" onclick="doTransfer()">လွှဲမယ် (Free)</button>
-<button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
-</div>
-</div>
-
-<!-- Withdraw -->
-<div id="screen-withdraw" class="hidden">
-<div style="padding:20px">
-<h2 style="margin-bottom:20px">🏦 အပြင်ထုတ်မယ်</h2>
-<select id="withdraw-chain">
-<option value="tron">Tron (fee: 2 USDT)</option>
-<option value="bsc">BSC (fee: 1 USDT)</option>
-</select>
-<input id="withdraw-address" placeholder="လိပ်စာ">
-<input id="withdraw-amount" type="number" placeholder="USDT ပမာဏ" min="0" step="0.01">
-<button class="btn btn-primary" onclick="doWithdraw()">ထုတ်မယ်</button>
-<button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
-</div>
-</div>
-
-<!-- History -->
-<div id="screen-history" class="hidden">
-<div style="padding:20px">
-<h2 style="margin-bottom:20px">📜 မှတ်တမ်း</h2>
-<div id="history-list"></div>
-<button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
-</div>
 </div>
 
 </div>
 
-<!-- Asset Detail Modal -->
 <div id="asset-modal" class="hidden">
 <div class="header">
 <span style="cursor:pointer;font-size:20px" onclick="closeAsset()">←</span>
-<h1 style="font-size:18px">USDT</h1>
+<h1 style="font-size:18px" id="asset-modal-title">USDT</h1>
 <span></span>
 </div>
 <div class="content">
-<div class="hero" style="text-align:center">
-<img id="asset-modal-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png" style="width:48px;height:48px;border-radius:50%;margin-bottom:8px">
-<div class="hero-balance"><span id="asset-modal-balance">0.00</span> <span style="font-size:20px;color:var(--muted)">USDT</span></div>
-<div class="hero-sub" id="asset-modal-network">Tron • TRC20</div>
+<div style="text-align:center;padding:20px">
+<img id="asset-modal-logo" src="" style="width:48px;height:48px;border-radius:50%;margin-bottom:8px">
+<div style="font-size:32px;font-weight:700"><span id="asset-modal-balance">0.00</span> <span style="font-size:18px;color:var(--muted)" id="asset-modal-cur">USDT</span></div>
+<div class="hint" id="asset-modal-network"></div>
 </div>
 <div class="actions">
-<div class="action-btn" onclick="closeAsset();showScreen('screen-transfer')"><span class="ico">📤</span><span class="lbl">လွှဲမယ်</span></div>
-<div class="action-btn" onclick="closeAsset();showScreen('screen-withdraw')"><span class="ico">🏦</span><span class="lbl">ထုတ်မယ်</span></div>
+<button class="act-btn" onclick="closeAsset();showScreen('screen-transfer')"><span class="act-circle">↗</span><span class="act-lbl">Send</span></button>
+<button class="act-btn" onclick="closeAsset();showScreen('screen-withdraw')"><span class="act-circle">🏦</span><span class="act-lbl">Withdraw</span></button>
 </div>
 <div class="section">
 <div class="section-title">📥 လိပ်စာ</div>
 <div class="card">
-<div class="qr-wrap">
-<img id="asset-modal-qr" src="" alt="QR">
-</div>
+<div class="qr-wrap"><img id="asset-modal-qr" src="" alt="QR"></div>
 <div class="addr-box" id="asset-modal-address" style="text-align:center">Loading...</div>
 <button class="btn btn-secondary" onclick="copyAssetAddress()">📋 ကူးယူမယ်</button>
 </div>
@@ -351,6 +279,16 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 
 <script>
 const API = 'https://mywallet-backend.zawminhtet723.workers.dev';
+const ICON = 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/';
+const ASSETS = [
+  {chain:'tron', cur:'USDT', name:'Tether', net:'Tron', badge:'🔴', icon:'usdt'},
+  {chain:'tron', cur:'TRX', name:'Tron', net:'Tron', badge:'🔴', icon:'trx'},
+  {chain:'bsc', cur:'USDT', name:'Tether', net:'BSC', badge:'🟡', icon:'usdt'},
+  {chain:'bsc', cur:'BNB', name:'BNB', net:'BSC', badge:'🟡', icon:'bnb'},
+  {chain:'eth', cur:'USDT', name:'Tether', net:'Ethereum', badge:'🔵', icon:'usdt'},
+  {chain:'eth', cur:'ETH', name:'Ethereum', net:'Ethereum', badge:'🔵', icon:'eth'},
+  {chain:'btc', cur:'BTC', name:'Bitcoin', net:'Bitcoin', badge:'🟠', icon:'btc'},
+];
 
 function toast(msg, isError = false) {
   const el = document.getElementById('toast');
@@ -359,64 +297,30 @@ function toast(msg, isError = false) {
   el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), 3000);
 }
-
 function customConfirm(msg) {
   return new Promise(resolve => {
     document.getElementById('confirm-msg').textContent = msg;
     document.getElementById('confirm-modal').classList.remove('hidden');
-    document.getElementById('confirm-yes').onclick = () => {
-      document.getElementById('confirm-modal').classList.add('hidden');
-      resolve(true);
-    };
-    document.getElementById('confirm-no').onclick = () => {
-      document.getElementById('confirm-modal').classList.add('hidden');
-      resolve(false);
-    };
+    document.getElementById('confirm-yes').onclick = () => { document.getElementById('confirm-modal').classList.add('hidden'); resolve(true); };
+    document.getElementById('confirm-no').onclick = () => { document.getElementById('confirm-modal').classList.add('hidden'); resolve(false); };
   });
 }
-
 function showScreen(id) {
-  ['screen-welcome','screen-register','screen-main','screen-transfer','screen-withdraw','screen-history','screen-profile'].forEach(s => {
-    document.getElementById(s).classList.add('hidden');
-  });
+  ['screen-welcome','screen-register','screen-main','screen-transfer','screen-withdraw','screen-history','screen-profile'].forEach(s => document.getElementById(s).classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if (id === 'screen-main') {
-    loadBalances();
-  }
+  if (id === 'screen-main') loadBalances();
   if (id === 'screen-history') loadHistory();
   if (id === 'screen-profile') loadProfile();
   window.scrollTo(0, 0);
 }
-
-function loadProfile() {
-  document.getElementById('profile-username').textContent = localStorage.getItem('mw_username') || '';
-  document.getElementById('profile-username2').textContent = localStorage.getItem('mw_username') || '';
-  document.getElementById('profile-uid').textContent = localStorage.getItem('mw_acc_id') || '';
-}
-
-function copyProfileUid() {
-  const uid = localStorage.getItem('mw_acc_id') || '';
-  const ta = document.createElement('textarea');
-  ta.value = uid;
-  ta.style.position = 'fixed'; ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand('copy'); toast('UID ကူးယူပြီးပြီ! ✅'); }
-  catch (e) { toast('UID: ' + uid); }
-  document.body.removeChild(ta);
-}
-
 function setMode(mode) {
   document.getElementById('mode-custodial').classList.toggle('active', mode === 'custodial');
   document.getElementById('mode-noncustodial').classList.toggle('active', mode === 'noncustodial');
   document.getElementById('custodial-form').classList.toggle('hidden', mode !== 'custodial');
   document.getElementById('noncustodial-form').classList.toggle('hidden', mode !== 'noncustodial');
 }
-
 function getToken() { return localStorage.getItem('mw_token'); }
 function setToken(t) { localStorage.setItem('mw_token', t); }
-
 async function api(path, method = 'GET', body = null) {
   const opts = { method, headers: { 'Content-Type': 'application/json' } };
   const token = getToken();
@@ -427,7 +331,6 @@ async function api(path, method = 'GET', body = null) {
   if (!res.ok) throw new Error(data.error || 'Error');
   return data;
 }
-
 async function doRegister() {
   const username = document.getElementById('reg-username').value.trim();
   const p1 = document.getElementById('reg-password').value;
@@ -442,7 +345,6 @@ async function doRegister() {
     showScreen('screen-main');
   } catch (e) { toast(e.message, true); }
 }
-
 async function doLogin() {
   const username = document.getElementById('login-username').value.trim();
   const password = document.getElementById('login-password').value;
@@ -454,66 +356,99 @@ async function doLogin() {
     showScreen('screen-main');
   } catch (e) { toast(e.message, true); }
 }
-
 function doLogout() {
-  localStorage.removeItem('mw_token');
-  localStorage.removeItem('mw_username');
-  localStorage.removeItem('mw_acc_id');
+  ['mw_token','mw_username','mw_acc_id'].forEach(k => localStorage.removeItem(k));
   showScreen('screen-welcome');
 }
-
+let BALANCES = {};
 async function loadBalances() {
   try {
     document.getElementById('display-username').textContent = localStorage.getItem('mw_username') || '';
     document.getElementById('display-accid').textContent = localStorage.getItem('mw_acc_id') || '';
     const data = await api('/api/balance');
+    BALANCES = {};
     let total = 0;
     for (const b of data.balances) {
       const amt = parseFloat(b.amount);
-      // Only count USDT towards USD total (TRX/BNB need price feed)
+      BALANCES[b.chain + ':' + b.currency] = amt;
       if (b.currency === 'USDT') total += amt;
-      const el = document.getElementById(`balance-${b.chain}-${b.currency}`);
-      if (el) el.textContent = amt.toFixed(2);
-      const usdEl = document.getElementById(`usd-${b.chain}-${b.currency}`);
-      if (usdEl) usdEl.textContent = amt.toFixed(2);
     }
     document.getElementById('balance-total').textContent = total.toFixed(2);
-    document.getElementById('balance-total-usdt').textContent = total.toFixed(2);
+    renderAssets();
     loadDepositAddress();
   } catch (e) {
     if (e.message.includes('Login')) showScreen('screen-welcome');
   }
 }
-
+function renderAssets() {
+  let html = '';
+  for (const a of ASSETS) {
+    const amt = BALANCES[a.chain + ':' + a.cur] || 0;
+    html += `<div class="asset-row" onclick="openAsset('${a.chain}','${a.cur}')">` +
+      `<div class="asset-logo-wrap"><img class="asset-logo" src="${ICON}${a.icon}.png" onerror="this.style.display='none'"><span class="asset-net-badge">${a.badge}</span></div>` +
+      `<div class="asset-info"><div class="asset-name">${a.name}</div><div class="asset-chg">+0.00%</div></div>` +
+      `<div class="asset-bal"><div class="asset-usd">$${amt.toFixed(2)}</div><div class="asset-amt">${amt.toFixed(4)} ${a.cur}</div></div></div>`;
+  }
+  document.getElementById('asset-list').innerHTML = html;
+}
 async function loadDepositAddress() {
   const chain = document.getElementById('deposit-chain').value;
   try {
     const data = await api('/api/deposit-address?chain=' + chain);
     document.getElementById('deposit-address').textContent = data.address || 'Address မရှိသေးပါ';
-  } catch (e) {
-    document.getElementById('deposit-address').textContent = 'Error';
-  }
+  } catch (e) { document.getElementById('deposit-address').textContent = 'Error'; }
 }
-
 function copyDepositAddress() {
   const addr = document.getElementById('deposit-address').textContent;
   const ta = document.createElement('textarea');
-  ta.value = addr;
-  ta.style.position = 'fixed'; ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand('copy'); toast('ကူးယူပြီးပြီ! ✅'); }
-  catch (e) { toast(addr); }
+  ta.value = addr; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); toast('ကူးယူပြီးပြီ! ✅'); } catch (e) { toast(addr); }
   document.body.removeChild(ta);
 }
-
+function copyUid() {
+  const uid = localStorage.getItem('mw_acc_id') || '';
+  const ta = document.createElement('textarea');
+  ta.value = uid; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); toast('UID ကူးယူပြီးပြီ! ✅'); } catch (e) { toast('UID: ' + uid); }
+  document.body.removeChild(ta);
+}
+let curChain = 'tron', curCur = 'USDT', curAddr = '';
+async function openAsset(chain, cur) {
+  curChain = chain; curCur = cur;
+  const a = ASSETS.find(x => x.chain === chain && x.cur === cur);
+  document.getElementById('asset-modal-title').textContent = cur;
+  document.getElementById('asset-modal-cur').textContent = cur;
+  document.getElementById('asset-modal-logo').src = ICON + (a ? a.icon : 'usdt') + '.png';
+  document.getElementById('asset-modal-network').textContent = a ? (a.net + ' network') : chain;
+  document.getElementById('asset-modal-balance').textContent = (BALANCES[chain + ':' + cur] || 0).toFixed(4);
+  document.getElementById('asset-modal-address').textContent = 'Loading...';
+  document.getElementById('asset-modal-qr').src = '';
+  document.getElementById('asset-modal').classList.remove('hidden');
+  try {
+    const data = await api('/api/deposit-address?chain=' + chain);
+    curAddr = data.address || '';
+    document.getElementById('asset-modal-address').textContent = curAddr || 'Address မရှိ';
+    if (curAddr) document.getElementById('asset-modal-qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(curAddr);
+  } catch (e) { document.getElementById('asset-modal-address').textContent = 'Error'; }
+}
+function closeAsset() { document.getElementById('asset-modal').classList.add('hidden'); }
+function copyAssetAddress() {
+  const ta = document.createElement('textarea');
+  ta.value = curAddr; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); toast('ကူးယူပြီးပြီ! ✅'); } catch (e) { toast(curAddr); }
+  document.body.removeChild(ta);
+}
 async function doTransfer() {
   const to = document.getElementById('transfer-to').value.trim();
   const chain = document.getElementById('transfer-chain').value;
+  const currency = document.getElementById('transfer-currency').value;
   const amount = document.getElementById('transfer-amount').value;
-  if (!await customConfirm(`${amount} USDT → ${to} လွှဲမလား? (Free)`)) return;
+  if (!await customConfirm(`${amount} ${currency} → ${to} လွှဲမလား? (Free)`)) return;
   try {
-    const body = /^\d+$/.test(to) ? { to_acc_id: to, chain, amount } : { to_username: to, chain, amount };
+    const body = /^\d+$/.test(to) ? { to_acc_id: to, chain, currency, amount } : { to_username: to, chain, currency, amount };
     const data = await api('/api/transfer', 'POST', body);
     toast(data.message);
     document.getElementById('transfer-to').value = '';
@@ -521,7 +456,6 @@ async function doTransfer() {
     showScreen('screen-main');
   } catch (e) { toast(e.message, true); }
 }
-
 async function doWithdraw() {
   const chain = document.getElementById('withdraw-chain').value;
   const address = document.getElementById('withdraw-address').value.trim();
@@ -535,77 +469,34 @@ async function doWithdraw() {
     showScreen('screen-main');
   } catch (e) { toast(e.message, true); }
 }
-
 async function loadHistory() {
   try {
     const data = await api('/api/history');
     let html = '';
-    if (data.transfers.length) {
-      html += '<div class="section-title">အချင်းချင်း</div>';
-      for (const t of data.transfers.slice(0, 10)) {
-        html += `<div class="card" style="margin-bottom:8px"><div>📤 ${t.amount} USDT → ${t.to_username}</div><div class="hint">${t.at}</div></div>`;
-      }
+    for (const t of data.transfers.slice(0, 20)) {
+      html += `<div class="card" style="margin-bottom:8px"><div>📤 ${t.amount} ${t.currency || 'USDT'} → ${t.to_username}</div><div class="hint">${t.at}</div></div>`;
     }
-    if (data.withdrawals.length) {
-      html += '<div class="section-title" style="margin-top:16px">အပြင်ထုတ်</div>';
-      for (const w of data.withdrawals.slice(0, 10)) {
-        html += `<div class="card" style="margin-bottom:8px"><div>🏦 ${w.amount} USDT <span class="hint">(fee ${w.fee})</span></div><div class="hint">${w.status} • ${w.at}</div></div>`;
-      }
+    for (const w of data.withdrawals.slice(0, 20)) {
+      html += `<div class="card" style="margin-bottom:8px"><div>🏦 ${w.amount} USDT <span class="hint">(fee ${w.fee})</span></div><div class="hint">${w.status} • ${w.at}</div></div>`;
     }
     document.getElementById('history-list').innerHTML = html || '<p class="hint">မှတ်တမ်းမရှိ</p>';
   } catch (e) { toast(e.message, true); }
 }
-
-let currentAssetChain = 'tron';
-let currentAssetCurrency = 'USDT';
-let currentAssetAddress = '';
-
-async function openAsset(chain, currency = 'USDT') {
-  currentAssetChain = chain;
-  currentAssetCurrency = currency;
-  const names = { tron: 'Tron • TRC20', bsc: 'BSC • BEP20', btc: 'Bitcoin • Native', eth: 'Ethereum • ERC20' };
-  document.getElementById('asset-modal-network').textContent = names[chain] || chain;
-  document.querySelector('#asset-modal h1').textContent = currency;
-  const balEl = document.getElementById(`balance-${chain}-${currency}`);
-  document.getElementById('asset-modal-balance').textContent = balEl ? balEl.textContent : '0.00';
-  document.querySelector('#asset-modal .hero-balance span:last-child').textContent = currency;
-  document.getElementById('asset-modal-address').textContent = 'Loading...';
-  document.getElementById('asset-modal-qr').src = '';
-  document.getElementById('asset-modal').classList.remove('hidden');
-  try {
-    const data = await api('/api/deposit-address?chain=' + chain);
-    currentAssetAddress = data.address || '';
-    document.getElementById('asset-modal-address').textContent = currentAssetAddress || 'Address မရှိ';
-    if (currentAssetAddress) {
-      document.getElementById('asset-modal-qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(currentAssetAddress);
-    }
-  } catch (e) {
-    document.getElementById('asset-modal-address').textContent = 'Error';
-  }
+function loadProfile() {
+  document.getElementById('profile-username').textContent = localStorage.getItem('mw_username') || '';
+  document.getElementById('profile-username2').textContent = localStorage.getItem('mw_username') || '';
+  document.getElementById('profile-uid').textContent = localStorage.getItem('mw_acc_id') || '';
 }
-
-function closeAsset() {
-  document.getElementById('asset-modal').classList.add('hidden');
-}
-
-function copyAssetAddress() {
+function copyProfileUid() {
+  const uid = localStorage.getItem('mw_acc_id') || '';
   const ta = document.createElement('textarea');
-  ta.value = currentAssetAddress;
-  ta.style.position = 'fixed'; ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand('copy'); toast('ကူးယူပြီးပြီ! ✅'); }
-  catch (e) { toast(currentAssetAddress); }
+  ta.value = uid; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); toast('UID ကူးယူပြီးပြီ! ✅'); } catch (e) { toast('UID: ' + uid); }
   document.body.removeChild(ta);
 }
-
-if (getToken()) {
-  showScreen('screen-main');
-}
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}
+if (getToken()) showScreen('screen-main');
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 </body>
 </html>
