@@ -81,7 +81,7 @@ input:focus{outline:none;border-color:#667eea}
 <div id="screen-main" class="hidden">
 <div class="content">
 <h2>💰 My Wallet</h2>
-<div style="color:#8892b0;font-size:14px;margin-bottom:8px">👤 <span id="display-username"></span></div>
+<div style="color:#8892b0;font-size:14px;margin-bottom:8px">👤 <span id="display-username"></span> <span style="background:#1a2332;padding:2px 8px;border-radius:8px;font-size:12px">ID: <span id="display-accid"></span></span></div>
 <div class="card">
 <div style="color:#8892b0;font-size:14px">USDT Balance (Tron)</div>
 <div style="font-size:32px;font-weight:700;margin:8px 0" id="balance-tron">0.00</div>
@@ -117,7 +117,7 @@ input:focus{outline:none;border-color:#667eea}
 <!-- Transfer -->
 <div id="screen-transfer" class="content hidden">
 <h2>👥 အချင်းချင်း လွှဲမယ် (Free)</h2>
-<input id="transfer-to" placeholder="Username">
+<input id="transfer-to" placeholder="Username သို့မဟုတ် Acc ID">
 <select id="transfer-chain">
 <option value="tron">Tron</option>
 <option value="bsc">BSC</option>
@@ -194,6 +194,8 @@ async function doRegister() {
     const data = await api('/api/register', 'POST', { username, password: p1 });
     setToken(data.token);
     localStorage.setItem('mw_username', data.username);
+    localStorage.setItem('mw_acc_id', data.acc_id || '');
+    alert('Account ID: ' + (data.acc_id || '') + ' — မှတ်ထားပါ!');
     showScreen('screen-main');
   } catch (e) { alert(e.message); }
 }
@@ -205,6 +207,7 @@ async function doLogin() {
     const data = await api('/api/login', 'POST', { username, password });
     setToken(data.token);
     localStorage.setItem('mw_username', data.username);
+    localStorage.setItem('mw_acc_id', data.acc_id || '');
     showScreen('screen-main');
   } catch (e) { alert(e.message); }
 }
@@ -212,12 +215,14 @@ async function doLogin() {
 function doLogout() {
   localStorage.removeItem('mw_token');
   localStorage.removeItem('mw_username');
+  localStorage.removeItem('mw_acc_id');
   showScreen('screen-welcome');
 }
 
 async function loadBalances() {
   try {
     document.getElementById('display-username').textContent = localStorage.getItem('mw_username') || '';
+    document.getElementById('display-accid').textContent = localStorage.getItem('mw_acc_id') || '';
     const data = await api('/api/balance');
     for (const b of data.balances) {
       const el = document.getElementById('balance-' + b.chain);
@@ -257,7 +262,8 @@ async function doTransfer() {
   const amount = document.getElementById('transfer-amount').value;
   if (!confirm(`${amount} USDT → ${to} လွှဲမလား? (Free)`)) return;
   try {
-    const data = await api('/api/transfer', 'POST', { to_username: to, chain, amount });
+    const body = /^\d+$/.test(to) ? { to_acc_id: to, chain, amount } : { to_username: to, chain, amount };
+    const data = await api('/api/transfer', 'POST', body);
     alert(data.message);
     showScreen('screen-main');
   } catch (e) { alert(e.message); }
