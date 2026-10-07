@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MyWallet - Crypto Wallet</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0f1e">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0f1e;color:#fff;min-height:100vh}
+.container{max-width:480px;margin:0 auto;padding:20px;min-height:100vh}
+.hidden{display:none!important}
+h1{font-size:28px;margin-bottom:8px}
+h2{font-size:22px;margin-bottom:16px}
+p.sub{color:#8892b0;margin-bottom:24px;line-height:1.5}
+.btn{display:block;width:100%;padding:16px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px;transition:transform .1s}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.btn-secondary{background:#1a2332;color:#fff;border:1px solid #2a3650}
+.btn-danger{background:#dc3545;color:#fff}
+.card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:20px;margin-bottom:16px}
+.seed-words{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:16px 0}
+.seed-word{background:#1a2332;border:1px solid #2a3650;border-radius:8px;padding:10px;text-align:center;font-size:14px}
+.seed-word span{color:#667eea;font-weight:700;margin-right:4px}
+input,textarea,select{width:100%;padding:14px;background:#1a2332;border:1px solid #2a3650;border-radius:10px;color:#fff;font-size:16px;margin-bottom:12px}
+input:focus,textarea:focus{outline:none;border-color:#667eea}
+.chain-list{display:flex;flex-direction:column;gap:12px}
+.chain-item{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.chain-item:active{background:#1a2332}
+.chain-info{display:flex;align-items:center;gap:12px}
+.chain-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
+.chain-name{font-weight:600}
+.chain-balance{color:#8892b0;font-size:14px}
+.chain-amount{font-weight:700;font-size:18px}
+.qr-container{text-align:center;padding:20px}
+.address-box{background:#1a2332;border:1px solid #2a3650;border-radius:10px;padding:12px;word-break:break-all;font-family:monospace;font-size:13px;margin:12px 0}
+.warning{background:#3a2a10;border:1px solid #8a6d1b;border-radius:10px;padding:14px;margin-bottom:16px;color:#fbbf24;font-size:14px;line-height:1.5}
+.nav-bar{position:fixed;bottom:0;left:0;right:0;background:#111827;border-top:1px solid #1f2937;display:flex;max-width:480px;margin:0 auto}
+.nav-item{flex:1;padding:14px;text-align:center;color:#8892b0;font-size:12px;cursor:pointer}
+.nav-item.active{color:#667eea}
+.nav-item .icon{font-size:20px;display:block;margin-bottom:4px}
+.content{padding-bottom:80px}
+.tx-item{border-bottom:1px solid #1f2937;padding:12px 0;display:flex;justify-content:space-between}
+.tx-hash{font-family:monospace;font-size:12px;color:#8892b0}
+</style>
+</head>
+<body>
+<div class="container">
+<!-- Welcome Screen -->
+<div id="screen-welcome" class="content">
+<h1>🔐 MyWallet</h1>
+<p class="sub">လုံခြုံသော crypto wallet<br>သင့်ရဲ့ seed phrase ကို သင်ကိုယ်တိုင်သာ ထိန်းသိမ်းပါ</p>
+<button class="btn btn-primary" onclick="showScreen('screen-create')">✨ Wallet အသစ် ဖန်တီးမယ်</button>
+<button class="btn btn-secondary" onclick="showScreen('screen-import')">📥 ရှိပြီးသား Wallet ပြန်သွင်းမယ်</button>
+</div>
+
+<!-- Create Wallet -->
+<div id="screen-create" class="content hidden">
+<h2>✨ Wallet အသစ်</h2>
+<div class="warning">⚠️ အောက်ပါ စကားလုံး 12 လုံးကို စာရွက်ပေါ်မှာ ချရေးပြီး လုံခြုံတဲ့နေရာမှာ သိမ်းပါ။ ဘယ်သူ့ကိုမှ မပြပါနဲ့!</div>
+<div class="card">
+<div class="seed-words" id="seedWords"></div>
+<button class="btn btn-secondary" onclick="copySeed()">📋 ကူးယူမယ်</button>
+</div>
+<button class="btn btn-primary" onclick="confirmSeed()">✅ မှတ်ပြီးပြီ၊ ဆက်မယ်</button>
+<button class="btn btn-secondary" onclick="showScreen('screen-welcome')">← နောက်သို့</button>
+</div>
+
+<!-- Confirm Seed -->
+<div id="screen-confirm" class="content hidden">
+<h2>🔍 အတည်ပြုပါ</h2>
+<p class="sub">Seed phrase ကို သေချာမှတ်မိဖို့ စကားလုံးတွေကို ပြန်ရွေးပါ</p>
+<div id="confirmWords"></div>
+<button class="btn btn-primary" onclick="verifySeed()">အတည်ပြုမယ်</button>
+</div>
+
+<!-- Import Wallet -->
+<div id="screen-import" class="content hidden">
+<h2>📥 Wallet ပြန်သွင်းမယ်</h2>
+<p class="sub">သင့်ရဲ့ 12 လုံး seed phrase ကို ရိုက်ထည့်ပါ</p>
+<textarea id="importSeed" rows="3" placeholder="word1 word2 word3 ..."></textarea>
+<button class="btn btn-primary" onclick="importWallet()">သွင်းမယ်</button>
+<button class="btn btn-secondary" onclick="showScreen('screen-welcome')">← နောက်သို့</button>
+</div>
+
+<!-- Password Setup -->
+<div id="screen-password" class="content hidden">
+<h2>🔑 Password သတ်မှတ်ပါ</h2>
+<p class="sub">Wallet ကို lock လုပ်ဖို့ password တစ်ခု သတ်မှတ်ပါ</p>
+<input type="password" id="pwd1" placeholder="Password">
+<input type="password" id="pwd2" placeholder="Password အတည်ပြုပါ">
+<button class="btn btn-primary" onclick="setupPassword()">သတ်မှတ်မယ်</button>
+</div>
+
+<!-- Main Dashboard -->
+<div id="screen-main" class="hidden">
+<div class="content">
+<h2>💰 My Wallet</h2>
+<div class="card">
+<div style="color:#8892b0;font-size:14px">စုစုပေါင်း တန်ဖိုး</div>
+<div style="font-size:32px;font-weight:700;margin:8px 0" id="totalBalance">$0.00</div>
+</div>
+<div class="chain-list" id="chainList"></div>
+<button class="btn btn-secondary" onclick="showScreen('screen-settings')">⚙️ Settings</button>
+</div>
+<div class="nav-bar">
+<div class="nav-item active" onclick="showTab('wallet')"><span class="icon">💰</span>Wallet</div>
+<div class="nav-item" onclick="showTab('send')"><span class="icon">📤</span>ပို့မယ်</div>
+<div class="nav-item" onclick="showTab('receive')"><span class="icon">📥</span>လက်ခံမယ်</div>
+</div>
+</div>
+
+<!-- Send Screen -->
+<div id="screen-send" class="content hidden">
+<h2>📤 ပို့မယ်</h2>
+<select id="sendChain"></select>
+<input id="sendTo" placeholder="လက်ခံမယ့် လိပ်စာ">
+<input id="sendAmount" type="number" placeholder="ပမာဏ">
+<button class="btn btn-primary" onclick="sendCrypto()">ပို့မယ်</button>
+<button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
+</div>
+
+<!-- Receive Screen -->
+<div id="screen-receive" class="content hidden">
+<h2>📥 လက်ခံမယ်</h2>
+<select id="receiveChain" onchange="updateReceiveAddress()"></select>
+<div class="qr-container">
+<canvas id="qrCode"></canvas>
+</div>
+<div class="address-box" id="receiveAddress"></div>
+<button class="btn btn-secondary" onclick="copyAddress()">📋 လိပ်စာ ကူးယူမယ်</button>
+<button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
+</div>
+
+<!-- Settings -->
+<div id="screen-settings" class="content hidden">
+<h2>⚙️ Settings</h2>
+<div class="card">
+<button class="btn btn-secondary" onclick="exportSeed()">🔑 Seed Phrase ကြည့်မယ်</button>
+<button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
+</div>
+<button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
+</div>
+</div>
+
+<script type="importmap">
+{"imports":{
+"bip39":"https://esm.sh/bip39@3.1.0",
+"ethers":"https://esm.sh/ethers@6.13.0",
+"bitcoinjs-lib":"https://esm.sh/bitcoinjs-lib@6.1.0",
+"bip32":"https://esm.sh/bip32@4.0.0",
+"tiny-secp256k1":"https://esm.sh/tiny-secp256k1@2.2.3",
+"tronweb":"https://esm.sh/tronweb@5.3.0",
+"qrcode":"https://esm.sh/qrcode@1.5.4"
+}}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+<script type="module" src="wallet.js"></script>
+</body>
+</html>
