@@ -21,374 +21,283 @@ p.sub{color:#8892b0;margin-bottom:24px;line-height:1.5}
 .btn-secondary{background:#1a2332;color:#fff;border:1px solid #2a3650}
 .btn-danger{background:#dc3545;color:#fff}
 .card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:20px;margin-bottom:16px}
-.seed-words{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:16px 0}
-.seed-word{background:#1a2332;border:1px solid #2a3650;border-radius:8px;padding:10px;text-align:center;font-size:14px}
-.seed-word span{color:#667eea;font-weight:700;margin-right:4px}
 input,textarea,select{width:100%;padding:14px;background:#1a2332;border:1px solid #2a3650;border-radius:10px;color:#fff;font-size:16px;margin-bottom:12px}
-input:focus,textarea:focus{outline:none;border-color:#667eea}
+input:focus{outline:none;border-color:#667eea}
 .chain-list{display:flex;flex-direction:column;gap:12px}
-.chain-item{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
-.chain-item:active{background:#1a2332}
+.chain-item{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between}
 .chain-info{display:flex;align-items:center;gap:12px}
 .chain-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
 .chain-name{font-weight:600}
 .chain-balance{color:#8892b0;font-size:14px}
 .chain-amount{font-weight:700;font-size:18px}
-.qr-container{text-align:center;padding:20px}
 .address-box{background:#1a2332;border:1px solid #2a3650;border-radius:10px;padding:12px;word-break:break-all;font-family:monospace;font-size:13px;margin:12px 0}
-.warning{background:#3a2a10;border:1px solid #8a6d1b;border-radius:10px;padding:14px;margin-bottom:16px;color:#fbbf24;font-size:14px;line-height:1.5}
 .nav-bar{position:fixed;bottom:0;left:0;right:0;background:#111827;border-top:1px solid #1f2937;display:flex;max-width:480px;margin:0 auto}
 .nav-item{flex:1;padding:14px;text-align:center;color:#8892b0;font-size:12px;cursor:pointer}
 .nav-item.active{color:#667eea}
 .nav-item .icon{font-size:20px;display:block;margin-bottom:4px}
 .content{padding-bottom:80px}
-.tx-item{border-bottom:1px solid #1f2937;padding:12px 0;display:flex;justify-content:space-between}
-.tx-hash{font-family:monospace;font-size:12px;color:#8892b0}
+.tx-item{border-bottom:1px solid #1f2937;padding:12px 0}
+.mode-toggle{display:flex;gap:8px;margin-bottom:20px}
+.mode-btn{flex:1;padding:12px;border-radius:10px;border:1px solid #2a3650;background:#1a2332;color:#8892b0;cursor:pointer;text-align:center}
+.mode-btn.active{background:#667eea;color:#fff;border-color:#667eea}
 </style>
 </head>
 <body>
 <div class="container">
-<!-- Welcome Screen -->
+<!-- Welcome / Login -->
 <div id="screen-welcome" class="content">
 <h1>🔐 MyWallet</h1>
-<p class="sub">လုံခြုံသော crypto wallet<br>သင့်ရဲ့ seed phrase ကို သင်ကိုယ်တိုင်သာ ထိန်းသိမ်းပါ</p>
-<button class="btn btn-primary" onclick="showScreen('screen-create')">✨ Wallet အသစ် ဖန်တီးမယ်</button>
-<button class="btn btn-secondary" onclick="showScreen('screen-import')">📥 ရှိပြီးသား Wallet ပြန်သွင်းမယ်</button>
+<p class="sub">USDT Wallet<br>အချင်းချင်း လွှဲခ Free!</p>
+
+<div class="mode-toggle">
+<div class="mode-btn active" id="mode-custodial" onclick="setMode('custodial')">🏦 Account</div>
+<div class="mode-btn" id="mode-noncustodial" onclick="setMode('noncustodial')">🔑 Seed Phrase</div>
 </div>
 
-<!-- Create Wallet -->
-<div id="screen-create" class="content hidden">
-<h2>✨ Wallet အသစ်</h2>
-<div class="warning">⚠️ အောက်ပါ စကားလုံး 12 လုံးကို စာရွက်ပေါ်မှာ ချရေးပြီး လုံခြုံတဲ့နေရာမှာ သိမ်းပါ။ ဘယ်သူ့ကိုမှ မပြပါနဲ့!</div>
-<div class="card">
-<div class="seed-words" id="seedWords"></div>
-<button class="btn btn-secondary" onclick="copySeed()">📋 ကူးယူမယ်</button>
+<div id="custodial-form">
+<input id="login-username" placeholder="Username">
+<input id="login-password" type="password" placeholder="Password">
+<button class="btn btn-primary" onclick="doLogin()">🔓 ဝင်မယ်</button>
+<button class="btn btn-secondary" onclick="showScreen('screen-register')">✨ Account အသစ် ဖွင့်မယ်</button>
 </div>
-<button class="btn btn-primary" onclick="confirmSeed()">✅ မှတ်ပြီးပြီ၊ ဆက်မယ်</button>
+
+<div id="noncustodial-form" class="hidden">
+<p class="sub">Seed phrase နဲ့ wallet (non-custodial)</p>
+<button class="btn btn-primary" onclick="location.href='noncustodial.html'">🔑 Seed Wallet ဖွင့်မယ်</button>
+</div>
+</div>
+
+<!-- Register -->
+<div id="screen-register" class="content hidden">
+<h2>✨ Account အသစ်</h2>
+<input id="reg-username" placeholder="Username (3+ လုံး)">
+<input id="reg-password" type="password" placeholder="Password (6+ လုံး)">
+<input id="reg-password2" type="password" placeholder="Password အတည်ပြုပါ">
+<button class="btn btn-primary" onclick="doRegister()">ဖွင့်မယ်</button>
 <button class="btn btn-secondary" onclick="showScreen('screen-welcome')">← နောက်သို့</button>
 </div>
 
-<!-- Confirm Seed -->
-<div id="screen-confirm" class="content hidden">
-<h2>🔍 အတည်ပြုပါ</h2>
-<p class="sub">Seed phrase ကို သေချာမှတ်မိဖို့ စကားလုံးတွေကို ပြန်ရွေးပါ</p>
-<div id="confirmWords"></div>
-<button class="btn btn-primary" onclick="verifySeed()">အတည်ပြုမယ်</button>
-</div>
-
-<!-- Import Wallet -->
-<div id="screen-import" class="content hidden">
-<h2>📥 Wallet ပြန်သွင်းမယ်</h2>
-<p class="sub">သင့်ရဲ့ 12 လုံး seed phrase ကို ရိုက်ထည့်ပါ</p>
-<textarea id="importSeed" rows="3" placeholder="word1 word2 word3 ..."></textarea>
-<button class="btn btn-primary" onclick="importWallet()">သွင်းမယ်</button>
-<button class="btn btn-secondary" onclick="showScreen('screen-welcome')">← နောက်သို့</button>
-</div>
-
-<!-- Password Setup -->
-<div id="screen-password" class="content hidden">
-<h2>🔑 Password သတ်မှတ်ပါ</h2>
-<p class="sub">Wallet ကို lock လုပ်ဖို့ password တစ်ခု သတ်မှတ်ပါ</p>
-<input type="password" id="pwd1" placeholder="Password">
-<input type="password" id="pwd2" placeholder="Password အတည်ပြုပါ">
-<button class="btn btn-primary" onclick="setupPassword()">သတ်မှတ်မယ်</button>
-</div>
-
-<!-- Main Dashboard -->
+<!-- Main -->
 <div id="screen-main" class="hidden">
 <div class="content">
 <h2>💰 My Wallet</h2>
+<div style="color:#8892b0;font-size:14px;margin-bottom:8px">👤 <span id="display-username"></span></div>
 <div class="card">
-<div style="color:#8892b0;font-size:14px">စုစုပေါင်း တန်ဖိုး</div>
-<div style="font-size:32px;font-weight:700;margin:8px 0" id="totalBalance">$0.00</div>
+<div style="color:#8892b0;font-size:14px">USDT Balance (Tron)</div>
+<div style="font-size:32px;font-weight:700;margin:8px 0" id="balance-tron">0.00</div>
+<div style="color:#8892b0;font-size:14px;margin-top:12px">USDT Balance (BSC)</div>
+<div style="font-size:24px;font-weight:700;margin:8px 0" id="balance-bsc">0.00</div>
 </div>
-<div class="chain-list" id="chainList"></div>
-<button class="btn btn-secondary" onclick="showScreen('screen-settings')">⚙️ Settings</button>
+
+<div class="card">
+<h3 style="margin-bottom:12px">📥 ငွေသွင်းမယ် (Deposit)</h3>
+<select id="deposit-chain" onchange="loadDepositAddress()">
+<option value="tron">Tron (TRC20)</option>
+<option value="bsc">BSC (BEP20)</option>
+</select>
+<div class="address-box" id="deposit-address">Loading...</div>
+<button class="btn btn-secondary" onclick="copyDepositAddress()">📋 ကူးယူမယ်</button>
+<p style="color:#8892b0;font-size:13px">အထက်ပါ address ကို USDT လွှဲထည့်ပါ</p>
+</div>
+
+<div class="card">
+<h3 style="margin-bottom:12px">📤 လွှဲမယ်</h3>
+<button class="btn btn-primary" onclick="showScreen('screen-transfer')">👥 အချင်းချင်း (Free)</button>
+<button class="btn btn-secondary" onclick="showScreen('screen-withdraw')">🏦 အပြင်ထုတ် (Fee)</button>
+</div>
+
+<button class="btn btn-secondary" onclick="doLogout()">🚪 Logout</button>
 </div>
 <div class="nav-bar">
-<div class="nav-item active" onclick="showTab('wallet')"><span class="icon">💰</span>Wallet</div>
-<div class="nav-item" onclick="showTab('send')"><span class="icon">📤</span>ပို့မယ်</div>
-<div class="nav-item" onclick="showTab('receive')"><span class="icon">📥</span>လက်ခံမယ်</div>
+<div class="nav-item active" onclick="showScreen('screen-main')"><span class="icon">💰</span>Wallet</div>
+<div class="nav-item" onclick="showScreen('screen-history')"><span class="icon">📜</span>မှတ်တမ်း</div>
 </div>
 </div>
 
-<!-- Send Screen -->
-<div id="screen-send" class="content hidden">
-<h2>📤 ပို့မယ်</h2>
-<select id="sendChain"></select>
-<input id="sendTo" placeholder="လက်ခံမယ့် လိပ်စာ">
-<input id="sendAmount" type="number" placeholder="ပမာဏ">
-<button class="btn btn-primary" onclick="sendCrypto()">ပို့မယ်</button>
+<!-- Transfer -->
+<div id="screen-transfer" class="content hidden">
+<h2>👥 အချင်းချင်း လွှဲမယ် (Free)</h2>
+<input id="transfer-to" placeholder="Username">
+<select id="transfer-chain">
+<option value="tron">Tron</option>
+<option value="bsc">BSC</option>
+</select>
+<input id="transfer-amount" type="number" placeholder="USDT ပမာဏ">
+<button class="btn btn-primary" onclick="doTransfer()">လွှဲမယ် (Free)</button>
 <button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
 </div>
 
-<!-- Receive Screen -->
-<div id="screen-receive" class="content hidden">
-<h2>📥 လက်ခံမယ်</h2>
-<select id="receiveChain" onchange="updateReceiveAddress()"></select>
-<div class="qr-container">
-<canvas id="qrCode"></canvas>
-</div>
-<div class="address-box" id="receiveAddress"></div>
-<button class="btn btn-secondary" onclick="copyAddress()">📋 လိပ်စာ ကူးယူမယ်</button>
+<!-- Withdraw -->
+<div id="screen-withdraw" class="content hidden">
+<h2>🏦 အပြင်ထုတ်မယ်</h2>
+<select id="withdraw-chain">
+<option value="tron">Tron (fee: 2 USDT)</option>
+<option value="bsc">BSC (fee: 1 USDT)</option>
+</select>
+<input id="withdraw-address" placeholder="လိပ်စာ">
+<input id="withdraw-amount" type="number" placeholder="USDT ပမာဏ">
+<button class="btn btn-primary" onclick="doWithdraw()">ထုတ်မယ်</button>
 <button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
 </div>
 
-<!-- Settings -->
-<div id="screen-settings" class="content hidden">
-<h2>⚙️ Settings</h2>
-<div class="card">
-<button class="btn btn-secondary" onclick="exportSeed()">🔑 Seed Phrase ကြည့်မယ်</button>
-<button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
-</div>
+<!-- History -->
+<div id="screen-history" class="content hidden">
+<h2>📜 မှတ်တမ်း</h2>
+<div id="history-list"></div>
 <button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
 </div>
 </div>
 
 <script>
-// Fallback BIP39 wordlist (first 128 words for demo - full list in module)
-const FALLBACK_WORDS = ['abandon','ability','able','about','above','absent','absorb','abstract','absurd','abuse','access','accident','account','accuse','achieve','acid','acoustic','acquire','across','act','action','actor','actress','actual','adapt','add','addict','address','adjust','admit','adult','advance','advice','aerobic','affair','afford','afraid','again','age','agent','agree','ahead','aim','air','airport','aisle','alarm','album','alcohol','alert','alien','all','alley','allow','almost','alone','alpha','already','also','alter','always','amateur','amazing','among','amount','amused','analyst','anchor','ancient','anger','angle','angry','animal','ankle','announce','annual','another','answer','antenna','antique','anxiety','any','apart','apology','appear','apple','approve','april','arch','arctic','area','arena','argue','arm','armed','armor','army','around','arrange','arrest','arrive','arrow','art','artefact','artist','artwork','ask','aspect','assault','asset','assist','assume','asthma','athlete','atom','attack','attend','attitude','attract','auction','audit','august','aunt','author','auto','autumn','average','avocado','avoid','awake','aware','away','awesome','awful','awkward'];
+const API = 'https://mywallet-backend.zawminhtet723.workers.dev';
 
-function generateFallbackMnemonic() {
-  const words = [];
-  for (let i = 0; i < 12; i++) {
-    words.push(FALLBACK_WORDS[Math.floor(Math.random() * FALLBACK_WORDS.length)]);
-  }
-  return words.join(' ');
-}
-
-function displaySeedWords(mnemonic) {
-  const words = mnemonic.split(' ');
-  const container = document.getElementById('seedWords');
-  if (container) {
-    container.innerHTML = words.map((w, i) => 
-      '<div class="seed-word"><span>' + (i+1) + '</span>' + w + '</div>'
-    ).join('');
-  }
-  return mnemonic;
-}
-
-// UI navigation - defined globally (not in module) so onclick works even if crypto libs fail
 function showScreen(id) {
-  // Hide all top-level screens
-  document.querySelectorAll('#screen-welcome, #screen-create, #screen-confirm, #screen-import, #screen-password, #screen-send, #screen-receive, #screen-settings').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.content').forEach(el => el.classList.add('hidden'));
   document.getElementById('screen-main').classList.add('hidden');
-  const el = document.getElementById(id);
-  el.classList.remove('hidden');
-  // If showing main, ensure its inner content is visible
+  document.getElementById(id).classList.remove('hidden');
   if (id === 'screen-main') {
-    const inner = el.querySelector('.content');
+    const inner = document.getElementById('screen-main').querySelector('.content');
     if (inner) inner.classList.remove('hidden');
+    loadBalances();
   }
+  if (id === 'screen-history') loadHistory();
   window.scrollTo(0, 0);
-  // If showing create screen and words are empty, generate fallback
-  if (id === 'screen-create') {
-    setTimeout(() => {
-      const container = document.getElementById('seedWords');
-      if (container && container.innerHTML.trim() === '' && typeof generateFallbackMnemonic === 'function') {
-        const mnemonic = generateFallbackMnemonic();
-        displaySeedWords(mnemonic);
-        window.fallbackMnemonic = mnemonic;
-        // Also try to set currentMnemonic for the module
-        if (typeof window.setFallbackMnemonic === 'function') {
-          window.setFallbackMnemonic(mnemonic);
-        }
-      }
-    }, 500);
-  }
 }
-// Copy seed words (global fallback) - mobile-friendly
-function copySeed() {
-  const words = [];
-  document.querySelectorAll('#seedWords .seed-word').forEach(el => {
-    const text = el.textContent.replace(/^[0-9]+/, '').trim();
-    words.push(text);
-  });
-  const mnemonic = words.join(' ');
-  // Use textarea method first (most reliable on mobile)
-  const ta = document.createElement('textarea');
-  ta.value = mnemonic;
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  ta.style.top = '0';
-  document.body.appendChild(ta);
-  ta.focus();
-  ta.select();
-  ta.setSelectionRange(0, 99999); // For mobile
+
+function setMode(mode) {
+  document.getElementById('mode-custodial').classList.toggle('active', mode === 'custodial');
+  document.getElementById('mode-noncustodial').classList.toggle('active', mode === 'noncustodial');
+  document.getElementById('custodial-form').classList.toggle('hidden', mode !== 'custodial');
+  document.getElementById('noncustodial-form').classList.toggle('hidden', mode !== 'noncustodial');
+}
+
+function getToken() { return localStorage.getItem('mw_token'); }
+function setToken(t) { localStorage.setItem('mw_token', t); }
+
+async function api(path, method = 'GET', body = null) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  const token = getToken();
+  if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API + path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Error');
+  return data;
+}
+
+async function doRegister() {
+  const username = document.getElementById('reg-username').value.trim();
+  const p1 = document.getElementById('reg-password').value;
+  const p2 = document.getElementById('reg-password2').value;
+  if (p1 !== p2) { alert('Password မတူဘူး!'); return; }
   try {
-    const ok = document.execCommand('copy');
-    document.body.removeChild(ta);
-    if (ok) {
-      alert('ကူးယူပြီးပြီ! ✅');
-    } else if (navigator.clipboard) {
-      navigator.clipboard.writeText(mnemonic).then(() => alert('ကူးယူပြီးပြီ! ✅')).catch(() => alert('ကူးမရဘူး! စာရွက်ပေါ်ချရေးပါ'));
-    } else {
-      alert('ကူးမရဘူး! စာရွက်ပေါ်ချရေးပါ');
-    }
-  } catch (e) {
-    document.body.removeChild(ta);
-    // Try clipboard API as last resort
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(mnemonic).then(() => alert('ကူးယူပြီးပြီ! ✅')).catch(() => {
-        prompt('အောက်က စာသားကို ကိုယ်တိုင်ကူးပါ:', mnemonic);
-      });
-    } else {
-      prompt('အောက်က စာသားကို ကိုယ်တိုင်ကူးပါ:', mnemonic);
-    }
-  }
-}
-
-// Confirm seed - skip verification for simplicity, go to password
-function confirmSeed() {
-  // If module is working with real mnemonic, use its verification
-  if (typeof window.moduleConfirmSeed === 'function' && !window.fallbackMnemonic) {
-    window.moduleConfirmSeed();
-  } else {
-    // Fallback: skip verification, go straight to password
-    const mnemonic = window.fallbackMnemonic || window.tempMnemonic;
-    if (!mnemonic) {
-      alert('Seed phrase မရသေးပါ! စက္ကန့်အနည်းငယ် စောင့်ပါ');
-      return;
-    }
-    window.tempMnemonic = mnemonic;
-    // Also set for module
-    if (typeof window.setFallbackMnemonic === 'function') {
-      window.setFallbackMnemonic(mnemonic);
-    }
-    showScreen('screen-password');
-  }
-}
-
-// Import wallet (global fallback)
-function importWallet() {
-  if (typeof window.moduleImportWallet === 'function' && !window.fallbackMode) {
-    window.moduleImportWallet();
-  } else {
-    const seed = document.getElementById('importSeed').value.trim();
-    if (!seed || seed.split(' ').length < 12) {
-      alert('Seed phrase မှားနေတယ်! (12 လုံး လိုတယ်)');
-      return;
-    }
-    window.fallbackMnemonic = seed;
-    window.tempMnemonic = seed;
-    showScreen('screen-password');
-  }
-}
-
-// Setup password (fallback if module fails)
-function setupPassword() {
-  if (typeof window.moduleSetupPassword === 'function') {
-    window.moduleSetupPassword();
-  } else {
-    // Fallback: just store mnemonic and show main screen with placeholder
-    const p1 = document.getElementById('pwd1').value;
-    const p2 = document.getElementById('pwd2').value;
-    if (p1.length < 6) { alert('Password အနည်းဆုံး 6 လုံး'); return; }
-    if (p1 !== p2) { alert('Password မတူဘူး!'); return; }
-    const mnemonic = window.fallbackMnemonic || window.tempMnemonic;
-    if (!mnemonic) { alert('Seed phrase မရှိပါ!'); return; }
-    // Simple storage (not encrypted - warn user)
-    localStorage.setItem('wallet_mnemonic_simple', mnemonic);
-    alert('Wallet ဖန်တီးပြီးပြီ! (Note: crypto functions limited)');
+    const data = await api('/api/register', 'POST', { username, password: p1 });
+    setToken(data.token);
+    localStorage.setItem('mw_username', data.username);
     showScreen('screen-main');
-    // Try to display placeholder chains
-    const list = document.getElementById('chainList');
-    if (list) {
-      list.innerHTML = '<div class="card"><p style="color:#8892b0">Crypto libraries loading...<br>Please refresh to enable full features.</p></div>';
+  } catch (e) { alert(e.message); }
+}
+
+async function doLogin() {
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  try {
+    const data = await api('/api/login', 'POST', { username, password });
+    setToken(data.token);
+    localStorage.setItem('mw_username', data.username);
+    showScreen('screen-main');
+  } catch (e) { alert(e.message); }
+}
+
+function doLogout() {
+  localStorage.removeItem('mw_token');
+  localStorage.removeItem('mw_username');
+  showScreen('screen-welcome');
+}
+
+async function loadBalances() {
+  try {
+    document.getElementById('display-username').textContent = localStorage.getItem('mw_username') || '';
+    const data = await api('/api/balance');
+    for (const b of data.balances) {
+      const el = document.getElementById('balance-' + b.chain);
+      if (el) el.textContent = parseFloat(b.amount).toFixed(2);
     }
+    loadDepositAddress();
+  } catch (e) {
+    if (e.message.includes('Login')) showScreen('screen-welcome');
   }
 }
 
-function showTab(tab) {
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  event.target.closest('.nav-item').classList.add('active');
-  if (tab === 'wallet') showScreen('screen-main');
-  else if (tab === 'send') { if (window.initSendScreen) initSendScreen(); showScreen('screen-send'); }
-  else if (tab === 'receive') { if (window.initReceiveScreen) initReceiveScreen(); showScreen('screen-receive'); }
+async function loadDepositAddress() {
+  const chain = document.getElementById('deposit-chain').value;
+  try {
+    const data = await api('/api/deposit-address?chain=' + chain);
+    document.getElementById('deposit-address').textContent = data.address || 'Address မရှိသေးပါ - Admin ကို ဆက်သွယ်ပါ';
+  } catch (e) {
+    document.getElementById('deposit-address').textContent = 'Error';
+  }
 }
-</script>
-<script type="importmap">
-{"imports":{
-"bip39":"https://esm.sh/bip39@3.1.0",
-"ethers":"https://esm.sh/ethers@6.13.0",
-"bitcoinjs-lib":"https://esm.sh/bitcoinjs-lib@6.1.0",
-"bip32":"https://esm.sh/bip32@4.0.0",
-"tiny-secp256k1":"https://esm.sh/tiny-secp256k1@2.2.3",
-"tronweb":"https://esm.sh/tronweb@5.3.0",
-"qrcode":"https://esm.sh/qrcode@1.5.4"
-}}
-</script>
-<script>
+
+function copyDepositAddress() {
+  const addr = document.getElementById('deposit-address').textContent;
+  const ta = document.createElement('textarea');
+  ta.value = addr;
+  ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); alert('ကူးယူပြီးပြီ! ✅'); }
+  catch (e) { prompt('ကူးပါ:', addr); }
+  document.body.removeChild(ta);
+}
+
+async function doTransfer() {
+  const to = document.getElementById('transfer-to').value.trim();
+  const chain = document.getElementById('transfer-chain').value;
+  const amount = document.getElementById('transfer-amount').value;
+  if (!confirm(`${amount} USDT → ${to} လွှဲမလား? (Free)`)) return;
+  try {
+    const data = await api('/api/transfer', 'POST', { to_username: to, chain, amount });
+    alert(data.message);
+    showScreen('screen-main');
+  } catch (e) { alert(e.message); }
+}
+
+async function doWithdraw() {
+  const chain = document.getElementById('withdraw-chain').value;
+  const address = document.getElementById('withdraw-address').value.trim();
+  const amount = document.getElementById('withdraw-amount').value;
+  if (!confirm(`${amount} USDT ထုတ်မလား?`)) return;
+  try {
+    const data = await api('/api/withdraw', 'POST', { chain, address, amount });
+    alert(data.message);
+    showScreen('screen-main');
+  } catch (e) { alert(e.message); }
+}
+
+async function loadHistory() {
+  try {
+    const data = await api('/api/history');
+    let html = '<h3>Transfer</h3>';
+    for (const t of data.transfers.slice(0, 10)) {
+      html += `<div class="tx-item">${t.amount} USDT → ${t.to_username}<br><small>${t.at}</small></div>`;
+    }
+    html += '<h3 style="margin-top:16px">Withdraw</h3>';
+    for (const w of data.withdrawals.slice(0, 10)) {
+      html += `<div class="tx-item">${w.amount} USDT (fee ${w.fee}) → ${w.address.slice(0, 12)}...<br><small>${w.status} - ${w.at}</small></div>`;
+    }
+    document.getElementById('history-list').innerHTML = html || '<p>မှတ်တမ်းမရှိ</p>';
+  } catch (e) { alert(e.message); }
+}
+
+// Auto-login if token exists
+if (getToken()) {
+  showScreen('screen-main');
+}
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
 </script>
-<script type="module" src="wallet.js"></script>
-<script>
-// Check if wallet exists on page load
-(function() {
-  const hasWallet = localStorage.getItem('wallet_enc') || localStorage.getItem('wallet_mnemonic_simple');
-  if (hasWallet) {
-    // Modify welcome screen to show unlock
-    setTimeout(() => {
-      const btn1 = document.querySelector('#screen-welcome .btn-primary');
-      const btn2 = document.querySelector('#screen-welcome .btn-secondary');
-      if (btn1) {
-        btn1.textContent = '🔓 Wallet ဖွင့်မယ်';
-        btn1.onclick = function() {
-          const pwd = prompt('Password ရိုက်ထည့်ပါ:');
-          if (pwd) unlockWalletGlobal(pwd);
-        };
-      }
-      if (btn2) btn2.style.display = 'none';
-    }, 100);
-  }
-})();
-
-function unlockWalletGlobal(password) {
-  // Try module first
-  if (typeof window.moduleUnlock === 'function') {
-    window.moduleUnlock(password);
-  } else {
-    // Fallback: check simple storage
-    const simple = localStorage.getItem('wallet_mnemonic_simple');
-    if (simple) {
-      window.fallbackMnemonic = simple;
-      window.tempMnemonic = simple;
-      showScreen('screen-main');
-      showFallbackWallet();
-    } else {
-      alert('Wallet မတွေ့ပါ!');
-    }
-  }
-}
-
-function showFallbackWallet() {
-  const list = document.getElementById('chainList');
-  if (list) {
-    const chains = [
-      {name: 'Ethereum', symbol: 'ETH', icon: '⟠', color: '#627eea'},
-      {name: 'BNB Chain', symbol: 'BNB', icon: '⬡', color: '#f0b90b'},
-      {name: 'Tron', symbol: 'TRX', icon: '◈', color: '#ff0013'},
-      {name: 'Bitcoin', symbol: 'BTC', icon: '₿', color: '#f7931a'},
-      {name: 'TON', symbol: 'TON', icon: '💎', color: '#0098ea'},
-    ];
-    list.innerHTML = chains.map(c => `
-      <div class="chain-item">
-        <div class="chain-info">
-          <div class="chain-icon" style="background:${c.color}20;color:${c.color}">${c.icon}</div>
-          <div>
-            <div class="chain-name">${c.name}</div>
-            <div class="chain-balance">Address generation requires refresh</div>
-          </div>
-        </div>
-        <div class="chain-amount">-</div>
-      </div>
-    `).join('');
-  }
-  document.getElementById('totalBalance').textContent = 'Refresh needed';
-}
-</script>
-
 </body>
 </html>
