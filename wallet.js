@@ -41,7 +41,7 @@ async function initCreate() {
 }
 // Make available globally for retry
 window.initCreate = initCreate;
-window.displaySeedWords = typeof displaySeedWords !== 'undefined' ? displaySeedWords : null;
+window.setFallbackMnemonic = function(m) { currentMnemonic = m; };
 
 // Copy seed
 window.copySeed = function() {
@@ -52,6 +52,14 @@ window.copySeed = function() {
 // Confirm seed - show random words to verify
 let confirmIndices = [];
 window.confirmSeed = function() {
+  // Use fallback if module mnemonic is null
+  if (!currentMnemonic && window.fallbackMnemonic) {
+    currentMnemonic = window.fallbackMnemonic;
+  }
+  if (!currentMnemonic) {
+    alert('Seed phrase မရသေးပါ! စက္ကန့်အနည်းငယ် စောင့်ပါ');
+    return;
+  }
   const words = currentMnemonic.split(' ');
   confirmIndices = [2, 5, 8].map(() => Math.floor(Math.random() * 12));
   document.getElementById('confirmWords').innerHTML = confirmIndices.map(idx => `

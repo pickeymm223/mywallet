@@ -175,6 +175,21 @@ function showScreen(id) {
   const el = document.getElementById(id);
   el.classList.remove('hidden');
   window.scrollTo(0, 0);
+  // If showing create screen and words are empty, generate fallback
+  if (id === 'screen-create') {
+    setTimeout(() => {
+      const container = document.getElementById('seedWords');
+      if (container && container.innerHTML.trim() === '' && typeof generateFallbackMnemonic === 'function') {
+        const mnemonic = generateFallbackMnemonic();
+        displaySeedWords(mnemonic);
+        window.fallbackMnemonic = mnemonic;
+        // Also try to set currentMnemonic for the module
+        if (typeof window.setFallbackMnemonic === 'function') {
+          window.setFallbackMnemonic(mnemonic);
+        }
+      }
+    }, 500);
+  }
 }
 function showTab(tab) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -201,18 +216,6 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 <script type="module" src="wallet.js"></script>
-<script>
-// Fallback: if module fails to generate words within 3 seconds, use fallback
-setTimeout(() => {
-  const container = document.getElementById('seedWords');
-  if (container && container.innerHTML.trim() === '' && typeof generateFallbackMnemonic === 'function') {
-    console.warn('Module failed to generate seed, using fallback');
-    const mnemonic = generateFallbackMnemonic();
-    displaySeedWords(mnemonic);
-    // Store for later use
-    window.fallbackMnemonic = mnemonic;
-  }
-}, 3000);
-</script>
+
 </body>
 </html>
