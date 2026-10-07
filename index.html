@@ -314,6 +314,8 @@ const ASSETS = [
 ];
 let PRICES = {};
 
+let priceTimer = null;
+
 async function fetchPrices() {
   try {
     const ids = [...new Set(ASSETS.map(a => a.gecko))].join(',');
@@ -325,6 +327,11 @@ async function fetchPrices() {
     }
     renderAssets();
   } catch (e) { /* silent */ }
+}
+
+function startPriceTimer() {
+  if (priceTimer) clearInterval(priceTimer);
+  priceTimer = setInterval(fetchPrices, 30000); // 30s
 }
 
 function toast(msg, isError = false) {
@@ -415,6 +422,7 @@ async function loadBalances() {
     }
     renderAssets();
     fetchPrices();
+    startPriceTimer();
     loadDepositAddress();
   } catch (e) {
     if (e.message.includes('Login')) showScreen('screen-welcome');
