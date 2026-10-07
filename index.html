@@ -40,6 +40,13 @@ input:focus{outline:none;border-color:#667eea}
 .mode-toggle{display:flex;gap:8px;margin-bottom:20px}
 .mode-btn{flex:1;padding:12px;border-radius:10px;border:1px solid #2a3650;background:#1a2332;color:#8892b0;cursor:pointer;text-align:center}
 .mode-btn.active{background:#667eea;color:#fff;border-color:#667eea}
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:#1a2332;border:1px solid #667eea;color:#fff;padding:14px 20px;border-radius:12px;font-size:15px;z-index:9999;max-width:90%;text-align:center;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast.error{border-color:#dc3545}
+#confirm-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9998;padding:20px}
+#confirm-box{background:#111827;border:1px solid #2a3650;border-radius:16px;padding:24px;max-width:400px;width:100%;text-align:center}
+#confirm-msg{margin-bottom:20px;line-height:1.5}
+
 </style>
 </head>
 <body>
@@ -148,8 +155,41 @@ input:focus{outline:none;border-color:#667eea}
 </div>
 </div>
 
+<div id="toast"></div>
+<div id="confirm-modal" class="hidden">
+<div id="confirm-box">
+<div id="confirm-msg"></div>
+<button class="btn btn-primary" id="confirm-yes">အတည်ပြုမယ်</button>
+<button class="btn btn-secondary" id="confirm-no">မလုပ်တော့ဘူး</button>
+</div>
+</div>
 <script>
 const API = 'https://mywallet-backend.zawminhtet723.workers.dev';
+
+// Custom toast (no domain popup)
+function toast(msg, isError = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = isError ? 'error' : '';
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// Custom confirm (no domain popup)
+function customConfirm(msg) {
+  return new Promise(resolve => {
+    document.getElementById('confirm-msg').textContent = msg;
+    document.getElementById('confirm-modal').classList.remove('hidden');
+    document.getElementById('confirm-yes').onclick = () => {
+      document.getElementById('confirm-modal').classList.add('hidden');
+      resolve(true);
+    };
+    document.getElementById('confirm-no').onclick = () => {
+      document.getElementById('confirm-modal').classList.add('hidden');
+      resolve(false);
+    };
+  });
+}
 
 function showScreen(id) {
   document.querySelectorAll('.content').forEach(el => el.classList.add('hidden'));
@@ -189,15 +229,15 @@ async function doRegister() {
   const username = document.getElementById('reg-username').value.trim();
   const p1 = document.getElementById('reg-password').value;
   const p2 = document.getElementById('reg-password2').value;
-  if (p1 !== p2) { alert('Password မတူဘူး!'); return; }
+  if (p1 !== p2) { toast('Password မတူဘူး!', true); return; }
   try {
     const data = await api('/api/register', 'POST', { username, password: p1 });
     setToken(data.token);
     localStorage.setItem('mw_username', data.username);
     localStorage.setItem('mw_acc_id', data.acc_id || '');
-    alert('Account ID: ' + (data.acc_id || '') + ' — မှတ်ထားပါ!');
+    toast('Account ID: ' + (data.acc_id || '') + ' — မှတ်ထားပါ!');
     showScreen('screen-main');
-  } catch (e) { alert(e.message); }
+  } catch (e) { toast(e.message, true); }
 }
 
 async function doLogin() {
@@ -209,7 +249,7 @@ async function doLogin() {
     localStorage.setItem('mw_username', data.username);
     localStorage.setItem('mw_acc_id', data.acc_id || '');
     showScreen('screen-main');
-  } catch (e) { alert(e.message); }
+  } catch (e) { toast(e.message, true); }
 }
 
 function doLogout() {
@@ -251,7 +291,7 @@ function copyDepositAddress() {
   ta.style.position = 'fixed'; ta.style.opacity = '0';
   document.body.appendChild(ta);
   ta.select();
-  try { document.execCommand('copy'); alert('ကူးယူပြီးပြီ! ✅'); }
+  try { document.execCommand('copy'); toast('ကူးယူပြီးပြီ! ✅'); }
   catch (e) { prompt('ကူးပါ:', addr); }
   document.body.removeChild(ta);
 }
@@ -260,25 +300,25 @@ async function doTransfer() {
   const to = document.getElementById('transfer-to').value.trim();
   const chain = document.getElementById('transfer-chain').value;
   const amount = document.getElementById('transfer-amount').value;
-  if (!confirm(`${amount} USDT → ${to} လွှဲမလား? (Free)`)) return;
+  if (!await customConfirm(`${amount} USDT → ${to} လွှဲမလား? (Free)`)) return;
   try {
     const body = /^\d+$/.test(to) ? { to_acc_id: to, chain, amount } : { to_username: to, chain, amount };
     const data = await api('/api/transfer', 'POST', body);
-    alert(data.message);
+    toast(data.message);
     showScreen('screen-main');
-  } catch (e) { alert(e.message); }
+  } catch (e) { toast(e.message, true); }
 }
 
 async function doWithdraw() {
   const chain = document.getElementById('withdraw-chain').value;
   const address = document.getElementById('withdraw-address').value.trim();
   const amount = document.getElementById('withdraw-amount').value;
-  if (!confirm(`${amount} USDT ထုတ်မလား?`)) return;
+  if (!await customConfirm(`${amount} USDT ထုတ်မလား?`)) return;
   try {
     const data = await api('/api/withdraw', 'POST', { chain, address, amount });
-    alert(data.message);
+    toast(data.message);
     showScreen('screen-main');
-  } catch (e) { alert(e.message); }
+  } catch (e) { toast(e.message, true); }
 }
 
 async function loadHistory() {
@@ -293,7 +333,7 @@ async function loadHistory() {
       html += `<div class="tx-item">${w.amount} USDT (fee ${w.fee}) → ${w.address.slice(0, 12)}...<br><small>${w.status} - ${w.at}</small></div>`;
     }
     document.getElementById('history-list').innerHTML = html || '<p>မှတ်တမ်းမရှိ</p>';
-  } catch (e) { alert(e.message); }
+  } catch (e) { toast(e.message, true); }
 }
 
 // Auto-login if token exists
