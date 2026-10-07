@@ -349,7 +349,7 @@ function customConfirm(msg) {
     document.getElementById('confirm-no').onclick = () => { document.getElementById('confirm-modal').classList.add('hidden'); resolve(false); };
   });
 }
-function showScreen(id) {
+function showScreen(id, push = true) {
   ['screen-welcome','screen-register','screen-main','screen-transfer','screen-withdraw','screen-history','screen-profile'].forEach(s => document.getElementById(s).classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
   // Bottom nav: show on logged-in screens, update active
@@ -358,10 +358,39 @@ function showScreen(id) {
   document.getElementById('nav-home').classList.toggle('active', id === 'screen-main');
   document.getElementById('nav-history').classList.toggle('active', id === 'screen-history');
   document.getElementById('nav-profile').classList.toggle('active', id === 'screen-profile');
+  if (push) history.pushState({ screen: id }, '', '#' + id);
   if (id === 'screen-main') loadBalances();
   if (id === 'screen-history') loadHistory();
   if (id === 'screen-profile') loadProfile();
   window.scrollTo(0, 0);
+}
+
+// Handle Android back button
+window.addEventListener('popstate', (e) => {
+  const modal = document.getElementById('asset-modal');
+  // If asset modal is open, close it
+  if (!modal.classList.contains('hidden')) {
+    modal.classList.add('hidden');
+    return;
+  }
+  // If we were on an asset state, modal already closed, stay
+  if (e.state && e.state.asset) return;
+  const screen = (e.state && e.state.screen) || 'screen-main';
+  // Don't go back to welcome if logged in
+  if ((screen === 'screen-welcome' || screen === 'screen-register') && getToken()) {
+    showScreen('screen-main', false);
+    history.pushState({ screen: 'screen-main' }, '', '#screen-main');
+    return;
+  }
+  showScreen(screen, false);
+});
+
+function currentScreen() {
+  const screens = ['screen-welcome','screen-register','screen-main','screen-transfer','screen-withdraw','screen-history','screen-profile'];
+  for (const s of screens) {
+    if (!document.getElementById(s).classList.contains('hidden')) return s;
+  }
+  return 'screen-main';
 }
 function setMode(mode) {
   document.getElementById('mode-custodial').classList.toggle('active', mode === 'custodial');
@@ -472,6 +501,7 @@ function copyUid() {
 }
 let curChain = 'tron', curCur = 'USDT', curAddr = '', curGecko = 'tether';
 async function openAsset(chain, cur) {
+  history.pushState({ asset: true }, '', '#asset');
   curChain = chain; curCur = cur;
   const a = ASSETS.find(x => x.chain === chain && x.cur === cur);
   curGecko = a ? a.gecko : 'tether';
@@ -533,7 +563,11 @@ function setChartTime(days, btn) {
   btn.classList.add('active');
   loadChart(days);
 }
-function closeAsset() { document.getElementById('asset-modal').classList.add('hidden'); }
+function closeAsset() {
+  document.getElementById('asset-modal').classList.add('hidden');
+  // Remove the asset state from history
+  if (history.state && history.state.asset) history.back();
+}
 function copyAssetAddress() {
   const ta = document.createElement('textarea');
   ta.value = curAddr; ta.style.position = 'fixed'; ta.style.opacity = '0';
@@ -595,7 +629,12 @@ function copyProfileUid() {
   try { document.execCommand('copy'); toast('UID ကူးယူပြီးပြီ! ✅'); } catch (e) { toast('UID: ' + uid); }
   document.body.removeChild(ta);
 }
-if (getToken()) showScreen('screen-main');
+if (getToken()) {
+  showScreen('screen-main', false);
+  history.replaceState({ screen: 'screen-main' }, '', '#screen-main');
+} else {
+  history.replaceState({ screen: 'screen-welcome' }, '', '#screen-welcome');
+}
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 </body>
