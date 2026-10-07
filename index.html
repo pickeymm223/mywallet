@@ -158,14 +158,6 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 </div>
 </div>
 </div>
-<div class="nav">
-<div class="nav-item active"><span class="ico">🏠</span>Home</div>
-<div class="nav-item" onclick="showScreen('screen-history')"><span class="ico">📜</span>History</div>
-<div class="nav-swap" onclick="showScreen('screen-transfer')">⇄</div>
-<div class="nav-item" onclick="showScreen('screen-profile')"><span class="ico">👤</span>Profile</div>
-<div class="nav-item" onclick="doLogout()"><span class="ico">🚪</span>Logout</div>
-</div>
-</div>
 
 <div id="screen-transfer" class="hidden">
 <div style="padding:20px">
@@ -239,6 +231,14 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 </div>
 </div>
 
+<div class="nav hidden" id="bottom-nav">
+<div class="nav-item" id="nav-home" onclick="showScreen('screen-main')"><span class="ico">🏠</span>Home</div>
+<div class="nav-item" id="nav-history" onclick="showScreen('screen-history')"><span class="ico">📜</span>History</div>
+<div class="nav-swap" onclick="showScreen('screen-transfer')">⇄</div>
+<div class="nav-item" id="nav-profile" onclick="showScreen('screen-profile')"><span class="ico">👤</span>Profile</div>
+<div class="nav-item" onclick="doLogout()"><span class="ico">🚪</span>Logout</div>
+</div>
+
 </div>
 
 <div id="asset-modal" class="hidden">
@@ -308,6 +308,12 @@ function customConfirm(msg) {
 function showScreen(id) {
   ['screen-welcome','screen-register','screen-main','screen-transfer','screen-withdraw','screen-history','screen-profile'].forEach(s => document.getElementById(s).classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
+  // Bottom nav: show on logged-in screens, update active
+  const loggedIn = ['screen-main','screen-transfer','screen-withdraw','screen-history','screen-profile'].includes(id);
+  document.getElementById('bottom-nav').classList.toggle('hidden', !loggedIn);
+  document.getElementById('nav-home').classList.toggle('active', id === 'screen-main');
+  document.getElementById('nav-history').classList.toggle('active', id === 'screen-history');
+  document.getElementById('nav-profile').classList.toggle('active', id === 'screen-profile');
   if (id === 'screen-main') loadBalances();
   if (id === 'screen-history') loadHistory();
   if (id === 'screen-profile') loadProfile();
