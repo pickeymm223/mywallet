@@ -33,9 +33,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .section{padding:0 20px;margin-bottom:20px}
 .section-title{font-size:16px;font-weight:600;margin-bottom:12px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
-.asset-row{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+.asset-row{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer}
 .asset-row:last-child{border:none}
-.asset-logo{width:40px;height:40px;border-radius:50%;margin-right:12px}
+.asset-row:active{background:#1a1f26}
+.asset-logo-wrap{position:relative;width:32px;height:32px;margin-right:12px;flex-shrink:0}
+.asset-logo{width:32px;height:32px;border-radius:50%}
+.asset-net-badge{position:absolute;bottom:-2px;right:-2px;width:14px;height:14px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px}
+/* Asset detail modal */
+#asset-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:9997;overflow-y:auto}
+#asset-modal .header{position:sticky;top:0;background:var(--bg)}
+.qr-wrap{text-align:center;padding:24px}
+.qr-wrap img{width:200px;height:200px;border-radius:16px;background:#fff;padding:8px}
 .asset-info{flex:1}
 .asset-name{font-weight:600;font-size:15px}
 .asset-net{color:var(--muted);font-size:12px}
@@ -137,13 +145,19 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 <div class="section">
 <div class="section-title">Assets</div>
 <div class="card">
-<div class="asset-row">
+<div class="asset-row" onclick="openAsset('tron')">
+<div class="asset-logo-wrap">
 <img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png" alt="USDT" onerror="this.style.display='none'">
+<span class="asset-net-badge">🔴</span>
+</div>
 <div class="asset-info"><div class="asset-name">USDT</div><div class="asset-net">Tron • TRC20</div></div>
 <div class="asset-bal"><div class="asset-amt" id="balance-tron">0.00</div><div class="asset-usd">$<span id="usd-tron">0.00</span></div></div>
 </div>
-<div class="asset-row">
+<div class="asset-row" onclick="openAsset('bsc')">
+<div class="asset-logo-wrap">
 <img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png" alt="USDT" onerror="this.style.display='none'">
+<span class="asset-net-badge">🟡</span>
+</div>
 <div class="asset-info"><div class="asset-name">USDT</div><div class="asset-net">BSC • BEP20</div></div>
 <div class="asset-bal"><div class="asset-amt" id="balance-bsc">0.00</div><div class="asset-usd">$<span id="usd-bsc">0.00</span></div></div>
 </div>
@@ -211,6 +225,36 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 </div>
 </div>
 
+</div>
+
+<!-- Asset Detail Modal -->
+<div id="asset-modal" class="hidden">
+<div class="header">
+<span style="cursor:pointer;font-size:20px" onclick="closeAsset()">←</span>
+<h1 style="font-size:18px">USDT</h1>
+<span></span>
+</div>
+<div class="content">
+<div class="hero" style="text-align:center">
+<img id="asset-modal-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png" style="width:48px;height:48px;border-radius:50%;margin-bottom:8px">
+<div class="hero-balance"><span id="asset-modal-balance">0.00</span> <span style="font-size:20px;color:var(--muted)">USDT</span></div>
+<div class="hero-sub" id="asset-modal-network">Tron • TRC20</div>
+</div>
+<div class="actions">
+<div class="action-btn" onclick="closeAsset();showScreen('screen-transfer')"><span class="ico">📤</span><span class="lbl">လွှဲမယ်</span></div>
+<div class="action-btn" onclick="closeAsset();showScreen('screen-withdraw')"><span class="ico">🏦</span><span class="lbl">ထုတ်မယ်</span></div>
+</div>
+<div class="section">
+<div class="section-title">📥 လိပ်စာ</div>
+<div class="card">
+<div class="qr-wrap">
+<img id="asset-modal-qr" src="" alt="QR">
+</div>
+<div class="addr-box" id="asset-modal-address" style="text-align:center">Loading...</div>
+<button class="btn btn-secondary" onclick="copyAssetAddress()">📋 ကူးယူမယ်</button>
+</div>
+</div>
+</div>
 </div>
 
 <div id="toast"></div>
@@ -407,6 +451,45 @@ async function loadHistory() {
     }
     document.getElementById('history-list').innerHTML = html || '<p class="hint">မှတ်တမ်းမရှိ</p>';
   } catch (e) { toast(e.message, true); }
+}
+
+let currentAssetChain = 'tron';
+let currentAssetAddress = '';
+
+async function openAsset(chain) {
+  currentAssetChain = chain;
+  const names = { tron: 'Tron • TRC20', bsc: 'BSC • BEP20' };
+  document.getElementById('asset-modal-network').textContent = names[chain] || chain;
+  const balEl = document.getElementById('balance-' + chain);
+  document.getElementById('asset-modal-balance').textContent = balEl ? balEl.textContent : '0.00';
+  document.getElementById('asset-modal-address').textContent = 'Loading...';
+  document.getElementById('asset-modal-qr').src = '';
+  document.getElementById('asset-modal').classList.remove('hidden');
+  try {
+    const data = await api('/api/deposit-address?chain=' + chain);
+    currentAssetAddress = data.address || '';
+    document.getElementById('asset-modal-address').textContent = currentAssetAddress || 'Address မရှိ';
+    if (currentAssetAddress) {
+      document.getElementById('asset-modal-qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(currentAssetAddress);
+    }
+  } catch (e) {
+    document.getElementById('asset-modal-address').textContent = 'Error';
+  }
+}
+
+function closeAsset() {
+  document.getElementById('asset-modal').classList.add('hidden');
+}
+
+function copyAssetAddress() {
+  const ta = document.createElement('textarea');
+  ta.value = currentAssetAddress;
+  ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); toast('ကူးယူပြီးပြီ! ✅'); }
+  catch (e) { toast(currentAssetAddress); }
+  document.body.removeChild(ta);
 }
 
 if (getToken()) {
