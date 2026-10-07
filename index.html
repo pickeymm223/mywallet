@@ -237,7 +237,7 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 <div class="nav-item" id="nav-history" onclick="showScreen('screen-history')"><img class="nav-ico" src="https://cdn-icons-png.flaticon.com/512/2822/2822682.png" alt="History">History</div>
 <div class="nav-swap" onclick="showScreen('screen-transfer')">⇄</div>
 <div class="nav-item" id="nav-profile" onclick="showScreen('screen-profile')"><img class="nav-ico" src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="Profile">Profile</div>
-<div class="nav-item" onclick="doLogout()"><span style="font-size:22px;display:block;margin-bottom:2px">🚪</span>Logout</div>
+<div class="nav-item" onclick="doLogout()"><img class="nav-ico" src="https://cdn-icons-png.flaticon.com/512/1286/1286853.png" alt="Logout">Logout</div>
 </div>
 
 </div>
@@ -256,7 +256,7 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 </div>
 <div class="actions">
 <button class="act-btn" onclick="closeAsset();showScreen('screen-transfer')"><span class="act-circle">↗</span><span class="act-lbl">Send</span></button>
-<button class="act-btn" onclick="closeAsset();showScreen('screen-withdraw')"><span class="act-circle">🏦</span><span class="act-lbl">Withdraw</span></button>
+<button class="act-btn" onclick="closeAsset();showScreen('screen-withdraw')"><span class="act-circle"><img src="https://cdn-icons-png.flaticon.com/512/10167/10167710.png" style="width:24px;height:24px"></span><span class="act-lbl">Withdraw</span></button>
 </div>
 <div class="section">
 <div class="section-title">📥 လိပ်စာ</div>
@@ -282,14 +282,28 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 const API = 'https://mywallet-backend.zawminhtet723.workers.dev';
 const ICON = 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/';
 const ASSETS = [
-  {chain:'tron', cur:'USDT', name:'Tether', net:'Tron', badge:'🔴', icon:'usdt'},
-  {chain:'tron', cur:'TRX', name:'Tron', net:'Tron', badge:'🔴', icon:'trx'},
-  {chain:'bsc', cur:'USDT', name:'Tether', net:'BSC', badge:'🟡', icon:'usdt'},
-  {chain:'bsc', cur:'BNB', name:'BNB', net:'BSC', badge:'🟡', icon:'bnb'},
-  {chain:'eth', cur:'USDT', name:'Tether', net:'Ethereum', badge:'🔵', icon:'usdt'},
-  {chain:'eth', cur:'ETH', name:'Ethereum', net:'Ethereum', badge:'🔵', icon:'eth'},
-  {chain:'btc', cur:'BTC', name:'Bitcoin', net:'Bitcoin', badge:'🟠', icon:'btc'},
+  {chain:'tron', cur:'USDT', name:'Tether', net:'Tron', badge:'🔴', icon:'usdt', gecko:'tether'},
+  {chain:'tron', cur:'TRX', name:'Tron', net:'Tron', badge:'🔴', icon:'trx', gecko:'tron'},
+  {chain:'bsc', cur:'USDT', name:'Tether', net:'BSC', badge:'🟡', icon:'usdt', gecko:'tether'},
+  {chain:'bsc', cur:'BNB', name:'BNB', net:'BSC', badge:'🟡', icon:'bnb', gecko:'binancecoin'},
+  {chain:'eth', cur:'USDT', name:'Tether', net:'Ethereum', badge:'🔵', icon:'usdt', gecko:'tether'},
+  {chain:'eth', cur:'ETH', name:'Ethereum', net:'Ethereum', badge:'🔵', icon:'eth', gecko:'ethereum'},
+  {chain:'btc', cur:'BTC', name:'Bitcoin', net:'Bitcoin', badge:'🟠', icon:'btc', gecko:'bitcoin'},
 ];
+let PRICES = {};
+
+async function fetchPrices() {
+  try {
+    const ids = [...new Set(ASSETS.map(a => a.gecko))].join(',');
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
+    const data = await res.json();
+    for (const a of ASSETS) {
+      const p = data[a.gecko];
+      if (p) PRICES[a.gecko] = { usd: p.usd, chg: p.usd_24h_change || 0 };
+    }
+    renderAssets();
+  } catch (e) { /* silent */ }
+}
 
 function toast(msg, isError = false) {
   const el = document.getElementById('toast');
@@ -374,14 +388,11 @@ async function loadBalances() {
     document.getElementById('display-accid').textContent = localStorage.getItem('mw_acc_id') || '';
     const data = await api('/api/balance');
     BALANCES = {};
-    let total = 0;
     for (const b of data.balances) {
-      const amt = parseFloat(b.amount);
-      BALANCES[b.chain + ':' + b.currency] = amt;
-      if (b.currency === 'USDT') total += amt;
+      BALANCES[b.chain + ':' + b.currency] = parseFloat(b.amount);
     }
-    document.getElementById('balance-total').textContent = total.toFixed(2);
     renderAssets();
+    fetchPrices();
     loadDepositAddress();
   } catch (e) {
     if (e.message.includes('Login')) showScreen('screen-welcome');
@@ -389,14 +400,22 @@ async function loadBalances() {
 }
 function renderAssets() {
   let html = '';
+  let total = 0;
   for (const a of ASSETS) {
     const amt = BALANCES[a.chain + ':' + a.cur] || 0;
+    const price = PRICES[a.gecko];
+    const usdVal = price ? amt * price.usd : (a.cur === 'USDT' ? amt : 0);
+    total += usdVal;
+    const chg = price ? price.chg : 0;
+    const chgCls = chg >= 0 ? '' : 'down';
+    const chgTxt = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%';
     html += `<div class="asset-row" onclick="openAsset('${a.chain}','${a.cur}')">` +
       `<div class="asset-logo-wrap"><img class="asset-logo" src="${ICON}${a.icon}.png" onerror="this.style.display='none'"><span class="asset-net-badge">${a.badge}</span></div>` +
-      `<div class="asset-info"><div class="asset-name">${a.name}</div><div class="asset-chg">+0.00%</div></div>` +
-      `<div class="asset-bal"><div class="asset-usd">$${amt.toFixed(2)}</div><div class="asset-amt">${amt.toFixed(4)} ${a.cur}</div></div></div>`;
+      `<div class="asset-info"><div class="asset-name">${a.name}</div><div class="asset-chg ${chgCls}">${chgTxt}</div></div>` +
+      `<div class="asset-bal"><div class="asset-usd">$${usdVal.toFixed(2)}</div><div class="asset-amt">${amt.toFixed(4)} ${a.cur}</div></div></div>`;
   }
   document.getElementById('asset-list').innerHTML = html;
+  document.getElementById('balance-total').textContent = total.toFixed(2);
 }
 async function loadDepositAddress() {
   const chain = document.getElementById('deposit-chain').value;
