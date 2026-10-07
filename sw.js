@@ -1,4 +1,4 @@
-const CACHE = 'mywallet-v1';
+const CACHE = 'mywallet-v2';
 const ASSETS = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
