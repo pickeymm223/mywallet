@@ -51,7 +51,7 @@ window.copySeed = function() {
 
 // Confirm seed - show random words to verify
 let confirmIndices = [];
-window.confirmSeed = function() {
+window.moduleConfirmSeed = function() {
   // Use fallback if module mnemonic is null
   if (!currentMnemonic && window.fallbackMnemonic) {
     currentMnemonic = window.fallbackMnemonic;
@@ -95,11 +95,15 @@ window.importWallet = function() {
 };
 
 // Setup password and encrypt
-window.setupPassword = async function() {
+window.moduleSetupPassword = async function() {
   const p1 = document.getElementById('pwd1').value;
   const p2 = document.getElementById('pwd2').value;
   if (p1.length < 6) { alert('Password အနည်းဆုံး 6 လုံး'); return; }
   if (p1 !== p2) { alert('Password မတူဘူး!'); return; }
+  // Use fallback mnemonic if module one is null
+  let mnemonic = currentMnemonic || window.fallbackMnemonic || window.tempMnemonic;
+  if (!mnemonic) { alert('Seed phrase မရှိပါ!'); return; }
+  currentMnemonic = mnemonic;
   
   // Encrypt mnemonic with password
   const encrypted = await encryptData(currentMnemonic, p1);

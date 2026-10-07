@@ -191,6 +191,72 @@ function showScreen(id) {
     }, 500);
   }
 }
+// Copy seed words (global fallback)
+function copySeed() {
+  const words = [];
+  document.querySelectorAll('#seedWords .seed-word').forEach(el => {
+    // Extract word text (remove number)
+    const text = el.textContent.replace(/^\d+/, '').trim();
+    words.push(text);
+  });
+  const mnemonic = words.join(' ');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(mnemonic).then(() => alert('ကူးယူပြီးပြီ!')).catch(() => {
+      // Fallback for older browsers
+      const ta = document.createElement('textarea');
+      ta.value = mnemonic;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      alert('ကူးယူပြီးပြီ!');
+    });
+  } else {
+    alert('Seed: ' + mnemonic);
+  }
+}
+
+// Confirm seed - use module if available, else use fallback
+function confirmSeed() {
+  if (typeof window.moduleConfirmSeed === 'function') {
+    window.moduleConfirmSeed();
+  } else {
+    // Fallback: just go to password screen
+    const mnemonic = window.fallbackMnemonic;
+    if (!mnemonic) {
+      alert('Seed phrase မရသေးပါ!');
+      return;
+    }
+    // Store and go to password
+    window.tempMnemonic = mnemonic;
+    showScreen('screen-password');
+  }
+}
+
+// Setup password (fallback if module fails)
+function setupPassword() {
+  if (typeof window.moduleSetupPassword === 'function') {
+    window.moduleSetupPassword();
+  } else {
+    // Fallback: just store mnemonic and show main screen with placeholder
+    const p1 = document.getElementById('pwd1').value;
+    const p2 = document.getElementById('pwd2').value;
+    if (p1.length < 6) { alert('Password အနည်းဆုံး 6 လုံး'); return; }
+    if (p1 !== p2) { alert('Password မတူဘူး!'); return; }
+    const mnemonic = window.fallbackMnemonic || window.tempMnemonic;
+    if (!mnemonic) { alert('Seed phrase မရှိပါ!'); return; }
+    // Simple storage (not encrypted - warn user)
+    localStorage.setItem('wallet_mnemonic_simple', mnemonic);
+    alert('Wallet ဖန်တီးပြီးပြီ! (Note: crypto functions limited)');
+    showScreen('screen-main');
+    // Try to display placeholder chains
+    const list = document.getElementById('chainList');
+    if (list) {
+      list.innerHTML = '<div class="card"><p style="color:#8892b0">Crypto libraries loading...<br>Please refresh to enable full features.</p></div>';
+    }
+  }
+}
+
 function showTab(tab) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   event.target.closest('.nav-item').classList.add('active');
