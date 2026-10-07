@@ -84,7 +84,7 @@ window.verifySeed = function() {
 };
 
 // Import wallet
-window.importWallet = function() {
+window.moduleImportWallet = function() {
   const seed = document.getElementById('importSeed').value.trim();
   if (!bip39.validateMnemonic(seed)) {
     alert('Seed phrase မှားနေတယ်!');
@@ -302,21 +302,8 @@ window.logout = function() {
   }
 };
 
-// Init - check if wallet exists
-if (localStorage.getItem('wallet_enc')) {
-  // Wallet exists, show unlock screen
-  showScreen('screen-welcome');
-  document.querySelector('#screen-welcome .btn-primary').textContent = '🔓 Wallet ဖွင့်မယ်';
-  document.querySelector('#screen-welcome .btn-primary').onclick = function() {
-    const pwd = prompt('Password ရိုက်ထည့်ပါ:');
-    if (pwd) unlockWallet(pwd);
-  };
-  document.querySelector('#screen-welcome .btn-secondary').style.display = 'none';
-} else {
-  initCreate();
-}
-
-async function unlockWallet(password) {
+// Module unlock function
+window.moduleUnlock = async function(password) {
   try {
     const enc = JSON.parse(localStorage.getItem('wallet_enc'));
     const mnemonic = await decryptData(enc, password);
@@ -325,4 +312,8 @@ async function unlockWallet(password) {
   } catch (e) {
     alert('Password မှားနေတယ်!');
   }
-}
+};
+
+// Init - always generate fresh words for new wallet flow
+// (existing wallet unlock is handled by global script in index.html)
+initCreate();

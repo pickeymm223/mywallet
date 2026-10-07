@@ -253,6 +253,22 @@ function confirmSeed() {
   }
 }
 
+// Import wallet (global fallback)
+function importWallet() {
+  if (typeof window.moduleImportWallet === 'function' && !window.fallbackMode) {
+    window.moduleImportWallet();
+  } else {
+    const seed = document.getElementById('importSeed').value.trim();
+    if (!seed || seed.split(' ').length < 12) {
+      alert('Seed phrase မှားနေတယ်! (12 လုံး လိုတယ်)');
+      return;
+    }
+    window.fallbackMnemonic = seed;
+    window.tempMnemonic = seed;
+    showScreen('screen-password');
+  }
+}
+
 // Setup password (fallback if module fails)
 function setupPassword() {
   if (typeof window.moduleSetupPassword === 'function') {
@@ -302,6 +318,71 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 <script type="module" src="wallet.js"></script>
+<script>
+// Check if wallet exists on page load
+(function() {
+  const hasWallet = localStorage.getItem('wallet_enc') || localStorage.getItem('wallet_mnemonic_simple');
+  if (hasWallet) {
+    // Modify welcome screen to show unlock
+    setTimeout(() => {
+      const btn1 = document.querySelector('#screen-welcome .btn-primary');
+      const btn2 = document.querySelector('#screen-welcome .btn-secondary');
+      if (btn1) {
+        btn1.textContent = '🔓 Wallet ဖွင့်မယ်';
+        btn1.onclick = function() {
+          const pwd = prompt('Password ရိုက်ထည့်ပါ:');
+          if (pwd) unlockWalletGlobal(pwd);
+        };
+      }
+      if (btn2) btn2.style.display = 'none';
+    }, 100);
+  }
+})();
+
+function unlockWalletGlobal(password) {
+  // Try module first
+  if (typeof window.moduleUnlock === 'function') {
+    window.moduleUnlock(password);
+  } else {
+    // Fallback: check simple storage
+    const simple = localStorage.getItem('wallet_mnemonic_simple');
+    if (simple) {
+      window.fallbackMnemonic = simple;
+      window.tempMnemonic = simple;
+      showScreen('screen-main');
+      showFallbackWallet();
+    } else {
+      alert('Wallet မတွေ့ပါ!');
+    }
+  }
+}
+
+function showFallbackWallet() {
+  const list = document.getElementById('chainList');
+  if (list) {
+    const chains = [
+      {name: 'Ethereum', symbol: 'ETH', icon: '⟠', color: '#627eea'},
+      {name: 'BNB Chain', symbol: 'BNB', icon: '⬡', color: '#f0b90b'},
+      {name: 'Tron', symbol: 'TRX', icon: '◈', color: '#ff0013'},
+      {name: 'Bitcoin', symbol: 'BTC', icon: '₿', color: '#f7931a'},
+      {name: 'TON', symbol: 'TON', icon: '💎', color: '#0098ea'},
+    ];
+    list.innerHTML = chains.map(c => `
+      <div class="chain-item">
+        <div class="chain-info">
+          <div class="chain-icon" style="background:${c.color}20;color:${c.color}">${c.icon}</div>
+          <div>
+            <div class="chain-name">${c.name}</div>
+            <div class="chain-balance">Address generation requires refresh</div>
+          </div>
+        </div>
+        <div class="chain-amount">-</div>
+      </div>
+    `).join('');
+  }
+  document.getElementById('totalBalance').textContent = 'Refresh needed';
+}
+</script>
 
 </body>
 </html>
