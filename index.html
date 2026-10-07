@@ -216,19 +216,23 @@ function copySeed() {
   }
 }
 
-// Confirm seed - use module if available, else use fallback
+// Confirm seed - skip verification for simplicity, go to password
 function confirmSeed() {
-  if (typeof window.moduleConfirmSeed === 'function') {
+  // If module is working with real mnemonic, use its verification
+  if (typeof window.moduleConfirmSeed === 'function' && !window.fallbackMnemonic) {
     window.moduleConfirmSeed();
   } else {
-    // Fallback: just go to password screen
-    const mnemonic = window.fallbackMnemonic;
+    // Fallback: skip verification, go straight to password
+    const mnemonic = window.fallbackMnemonic || window.tempMnemonic;
     if (!mnemonic) {
-      alert('Seed phrase မရသေးပါ!');
+      alert('Seed phrase မရသေးပါ! စက္ကန့်အနည်းငယ် စောင့်ပါ');
       return;
     }
-    // Store and go to password
     window.tempMnemonic = mnemonic;
+    // Also set for module
+    if (typeof window.setFallbackMnemonic === 'function') {
+      window.setFallbackMnemonic(mnemonic);
+    }
     showScreen('screen-password');
   }
 }
