@@ -177,19 +177,27 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 <div class="asset-info"><div class="asset-name">BNB</div><div class="asset-net">BSC • Native</div></div>
 <div class="asset-bal"><div class="asset-amt" id="balance-bsc-BNB">0.00</div><div class="asset-usd">$<span id="usd-bsc-BNB">0.00</span></div></div>
 </div>
-<div class="asset-row" style="opacity:.5">
+<div class="asset-row" onclick="openAsset('btc', 'BTC')">
 <div class="asset-logo-wrap">
 <img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/btc.png" alt="BTC" onerror="this.style.display='none'">
 </div>
-<div class="asset-info"><div class="asset-name">Bitcoin</div><div class="asset-net">BTC • Coming soon</div></div>
-<div class="asset-bal"><div class="asset-amt">-</div></div>
+<div class="asset-info"><div class="asset-name">Bitcoin</div><div class="asset-net">BTC • Native</div></div>
+<div class="asset-bal"><div class="asset-amt" id="balance-btc-BTC">0.00</div><div class="asset-usd">$<span id="usd-btc-BTC">0.00</span></div></div>
 </div>
-<div class="asset-row" style="opacity:.5">
+<div class="asset-row" onclick="openAsset('eth', 'ETH')">
 <div class="asset-logo-wrap">
 <img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/eth.png" alt="ETH" onerror="this.style.display='none'">
 </div>
-<div class="asset-info"><div class="asset-name">Ethereum</div><div class="asset-net">ETH • Coming soon</div></div>
-<div class="asset-bal"><div class="asset-amt">-</div></div>
+<div class="asset-info"><div class="asset-name">Ethereum</div><div class="asset-net">ETH • Native</div></div>
+<div class="asset-bal"><div class="asset-amt" id="balance-eth-ETH">0.00</div><div class="asset-usd">$<span id="usd-eth-ETH">0.00</span></div></div>
+</div>
+<div class="asset-row" onclick="openAsset('eth', 'USDT')">
+<div class="asset-logo-wrap">
+<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png" alt="USDT" onerror="this.style.display='none'">
+<span class="asset-net-badge">🔵</span>
+</div>
+<div class="asset-info"><div class="asset-name">USDT</div><div class="asset-net">ETH • ERC20</div></div>
+<div class="asset-bal"><div class="asset-amt" id="balance-eth-USDT">0.00</div><div class="asset-usd">$<span id="usd-eth-USDT">0.00</span></div></div>
 </div>
 <div class="asset-row" style="opacity:.5">
 <div class="asset-logo-wrap">
@@ -555,7 +563,7 @@ let currentAssetAddress = '';
 async function openAsset(chain, currency = 'USDT') {
   currentAssetChain = chain;
   currentAssetCurrency = currency;
-  const names = { tron: 'Tron • TRC20', bsc: 'BSC • BEP20' };
+  const names = { tron: 'Tron • TRC20', bsc: 'BSC • BEP20', btc: 'Bitcoin • Native', eth: 'Ethereum • ERC20' };
   document.getElementById('asset-modal-network').textContent = names[chain] || chain;
   document.querySelector('#asset-modal h1').textContent = currency;
   const balEl = document.getElementById(`balance-${chain}-${currency}`);
