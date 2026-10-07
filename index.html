@@ -3,171 +3,214 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MyWallet - Crypto Wallet</title>
+<title>MyWallet</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0a0f1e">
+<meta name="theme-color" content="#0b0e11">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0f1e;color:#fff;min-height:100vh}
-.container{max-width:480px;margin:0 auto;padding:20px;min-height:100vh}
+:root{--bg:#0b0e11;--card:#12161c;--border:#1e2329;--text:#eaecef;--muted:#848e9c;--accent:#f0b90b;--green:#0ecb81;--red:#f6465d}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.container{max-width:480px;margin:0 auto;min-height:100vh}
 .hidden{display:none!important}
-h1{font-size:28px;margin-bottom:8px}
-h2{font-size:22px;margin-bottom:16px}
-p.sub{color:#8892b0;margin-bottom:24px;line-height:1.5}
-.btn{display:block;width:100%;padding:16px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px;transition:transform .1s}
-.btn:active{transform:scale(.98)}
-.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
-.btn-secondary{background:#1a2332;color:#fff;border:1px solid #2a3650}
-.btn-danger{background:#dc3545;color:#fff}
-.card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:20px;margin-bottom:16px}
-input,textarea,select{width:100%;padding:14px;background:#1a2332;border:1px solid #2a3650;border-radius:10px;color:#fff;font-size:16px;margin-bottom:12px}
-input:focus{outline:none;border-color:#667eea}
-.chain-list{display:flex;flex-direction:column;gap:12px}
-.chain-item{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between}
-.chain-info{display:flex;align-items:center;gap:12px}
-.chain-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
-.chain-name{font-weight:600}
-.chain-balance{color:#8892b0;font-size:14px}
-.chain-amount{font-weight:700;font-size:18px}
-.address-box{background:#1a2332;border:1px solid #2a3650;border-radius:10px;padding:12px;word-break:break-all;font-family:monospace;font-size:13px;margin:12px 0}
-.nav-bar{position:fixed;bottom:0;left:0;right:0;background:#111827;border-top:1px solid #1f2937;display:flex;max-width:480px;margin:0 auto}
-.nav-item{flex:1;padding:14px;text-align:center;color:#8892b0;font-size:12px;cursor:pointer}
-.nav-item.active{color:#667eea}
-.nav-item .icon{font-size:20px;display:block;margin-bottom:4px}
-.content{padding-bottom:80px}
-.tx-item{border-bottom:1px solid #1f2937;padding:12px 0}
-.mode-toggle{display:flex;gap:8px;margin-bottom:20px}
-.mode-btn{flex:1;padding:12px;border-radius:10px;border:1px solid #2a3650;background:#1a2332;color:#8892b0;cursor:pointer;text-align:center}
-.mode-btn.active{background:#667eea;color:#fff;border-color:#667eea}
-#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:#1a2332;border:1px solid #667eea;color:#fff;padding:14px 20px;border-radius:12px;font-size:15px;z-index:9999;max-width:90%;text-align:center;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+/* Header */
+.header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.header h1{font-size:20px;font-weight:700}
+.user-chip{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:6px 12px;font-size:13px}
+.user-chip .uid{background:var(--accent);color:#000;font-weight:700;padding:2px 8px;border-radius:12px;font-size:12px}
+/* Balance hero */
+.hero{padding:24px 20px;text-align:left}
+.hero-label{color:var(--muted);font-size:14px;margin-bottom:4px}
+.hero-balance{font-size:40px;font-weight:700;letter-spacing:-1px}
+.hero-sub{color:var(--muted);font-size:13px;margin-top:4px}
+/* Quick actions */
+.actions{display:flex;gap:12px;padding:0 20px;margin-bottom:20px}
+.action-btn{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 8px;text-align:center;cursor:pointer;color:var(--text)}
+.action-btn:active{background:#1a1f26}
+.action-btn .ico{font-size:22px;display:block;margin-bottom:6px}
+.action-btn .lbl{font-size:12px;color:var(--muted)}
+/* Section */
+.section{padding:0 20px;margin-bottom:20px}
+.section-title{font-size:16px;font-weight:600;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
+.asset-row{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+.asset-row:last-child{border:none}
+.asset-logo{width:40px;height:40px;border-radius:50%;margin-right:12px}
+.asset-info{flex:1}
+.asset-name{font-weight:600;font-size:15px}
+.asset-net{color:var(--muted);font-size:12px}
+.asset-bal{text-align:right}
+.asset-amt{font-weight:700;font-size:15px}
+.asset-usd{color:var(--muted);font-size:12px}
+/* Forms */
+input,select{width:100%;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:16px;margin-bottom:12px}
+input:focus,select:focus{outline:none;border-color:var(--accent)}
+.btn{display:block;width:100%;padding:15px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px}
+.btn:active{opacity:.9}
+.btn-primary{background:var(--accent);color:#000}
+.btn-secondary{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.addr-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;word-break:break-all;font-family:monospace;font-size:12px;margin:12px 0;color:var(--muted)}
+.hint{color:var(--muted);font-size:13px;line-height:1.5;margin-top:8px}
+/* Toast */
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:#1a2332;border:1px solid var(--accent);color:#fff;padding:14px 20px;border-radius:12px;font-size:15px;z-index:9999;max-width:90%;text-align:center;transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,.5)}
 #toast.show{transform:translateX(-50%) translateY(0)}
-#toast.error{border-color:#dc3545}
+#toast.error{border-color:var(--red)}
+/* Confirm modal */
 #confirm-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9998;padding:20px}
-#confirm-box{background:#111827;border:1px solid #2a3650;border-radius:16px;padding:24px;max-width:400px;width:100%;text-align:center}
+#confirm-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:400px;width:100%;text-align:center}
 #confirm-msg{margin-bottom:20px;line-height:1.5}
-
+/* Bottom nav */
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;max-width:480px;margin:0 auto;z-index:100}
+.nav-item{flex:1;padding:12px;text-align:center;color:var(--muted);font-size:11px;cursor:pointer}
+.nav-item.active{color:var(--accent)}
+.nav-item .ico{font-size:20px;display:block;margin-bottom:2px}
+.content{padding-bottom:80px}
+/* Login */
+.login-wrap{padding:40px 20px;text-align:center}
+.login-logo{font-size:48px;margin-bottom:12px}
+.login-title{font-size:28px;font-weight:700;margin-bottom:8px}
+.login-sub{color:var(--muted);margin-bottom:32px;line-height:1.5}
+.mode-toggle{display:flex;gap:8px;margin-bottom:24px;background:var(--card);border-radius:12px;padding:4px}
+.mode-btn{flex:1;padding:12px;border-radius:8px;color:var(--muted);cursor:pointer;text-align:center;font-size:14px}
+.mode-btn.active{background:var(--border);color:var(--text);font-weight:600}
 </style>
 </head>
 <body>
 <div class="container">
-<!-- Welcome / Login -->
-<div id="screen-welcome" class="content">
-<h1>🔐 MyWallet</h1>
-<p class="sub">USDT Wallet<br>အချင်းချင်း လွှဲခ Free!</p>
 
+<!-- Login -->
+<div id="screen-welcome">
+<div class="login-wrap">
+<div class="login-logo">💰</div>
+<div class="login-title">MyWallet</div>
+<div class="login-sub">USDT Wallet<br>အချင်းချင်း လွှဲခ Free!</div>
 <div class="mode-toggle">
 <div class="mode-btn active" id="mode-custodial" onclick="setMode('custodial')">🏦 Account</div>
-<div class="mode-btn" id="mode-noncustodial" onclick="setMode('noncustodial')">🔑 Seed Phrase</div>
+<div class="mode-btn" id="mode-noncustodial" onclick="setMode('noncustodial')">🔑 Seed</div>
 </div>
-
 <div id="custodial-form">
-<input id="login-username" placeholder="Username">
-<input id="login-password" type="password" placeholder="Password">
-<button class="btn btn-primary" onclick="doLogin()">🔓 ဝင်မယ်</button>
-<button class="btn btn-secondary" onclick="showScreen('screen-register')">✨ Account အသစ် ဖွင့်မယ်</button>
+<input id="login-username" placeholder="Username" autocomplete="username">
+<input id="login-password" type="password" placeholder="Password" autocomplete="current-password">
+<button class="btn btn-primary" onclick="doLogin()">ဝင်မယ်</button>
+<button class="btn btn-secondary" onclick="showScreen('screen-register')">Account အသစ် ဖွင့်မယ်</button>
 </div>
-
 <div id="noncustodial-form" class="hidden">
-<p class="sub">Seed phrase နဲ့ wallet (non-custodial)</p>
-<button class="btn btn-primary" onclick="location.href='noncustodial.html'">🔑 Seed Wallet ဖွင့်မယ်</button>
+<p class="hint" style="margin-bottom:16px">Seed phrase နဲ့ wallet (non-custodial)</p>
+<button class="btn btn-primary" onclick="location.href='noncustodial.html'">Seed Wallet ဖွင့်မယ်</button>
+</div>
 </div>
 </div>
 
 <!-- Register -->
-<div id="screen-register" class="content hidden">
-<h2>✨ Account အသစ်</h2>
-<input id="reg-username" placeholder="Username (3+ လုံး)">
-<input id="reg-password" type="password" placeholder="Password (6+ လုံး)">
-<input id="reg-password2" type="password" placeholder="Password အတည်ပြုပါ">
+<div id="screen-register" class="hidden">
+<div style="padding:20px">
+<h2 style="margin-bottom:20px">Account အသစ်</h2>
+<input id="reg-username" placeholder="Username (3+ လုံး)" autocomplete="username">
+<input id="reg-password" type="password" placeholder="Password (6+ လုံး)" autocomplete="new-password">
+<input id="reg-password2" type="password" placeholder="Password အတည်ပြုပါ" autocomplete="new-password">
 <button class="btn btn-primary" onclick="doRegister()">ဖွင့်မယ်</button>
 <button class="btn btn-secondary" onclick="showScreen('screen-welcome')">← နောက်သို့</button>
+</div>
 </div>
 
 <!-- Main -->
 <div id="screen-main" class="hidden">
+<div class="header">
+<h1>MyWallet</h1>
+<div class="user-chip">
+<span id="display-username"></span>
+<span class="uid">UID <span id="display-accid"></span></span>
+</div>
+</div>
 <div class="content">
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-<h2 style="margin:0">💰 My Wallet</h2>
+<div class="hero">
+<div class="hero-label">Total Balance (USD)</div>
+<div class="hero-balance">$<span id="balance-total">0.00</span></div>
+<div class="hero-sub">≈ <span id="balance-total-usdt">0.00</span> USDT</div>
 </div>
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
-<span style="color:#8892b0;font-size:14px">👤 <span id="display-username"></span></span>
-<span style="background:#667eea;color:#fff;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600">UID: <span id="display-accid"></span></span>
-<button onclick="copyUid()" style="background:#1a2332;border:1px solid #2a3650;color:#8892b0;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer">📋</button>
+<div class="actions">
+<div class="action-btn" onclick="showScreen('screen-transfer')"><span class="ico">📤</span><span class="lbl">လွှဲမယ်</span></div>
+<div class="action-btn" onclick="document.getElementById('deposit-section').scrollIntoView({behavior:'smooth'})"><span class="ico">📥</span><span class="lbl">သွင်းမယ်</span></div>
+<div class="action-btn" onclick="showScreen('screen-withdraw')"><span class="ico">🏦</span><span class="lbl">ထုတ်မယ်</span></div>
+<div class="action-btn" onclick="showScreen('screen-history')"><span class="ico">📜</span><span class="lbl">မှတ်တမ်း</span></div>
 </div>
-<div class="card" style="text-align:center;padding:28px 20px">
-<div style="color:#8892b0;font-size:14px">Total Balance</div>
-<div style="font-size:44px;font-weight:700;margin:8px 0">$<span id="balance-total">0.00</span></div>
-<div style="color:#8892b0;font-size:13px">≈ <span id="balance-total-usdt">0.00</span> USDT</div>
-</div>
+<div class="section">
+<div class="section-title">Assets</div>
 <div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1f2937">
-<div><div style="font-weight:600">🔴 Tron</div><div style="color:#8892b0;font-size:13px">TRC20</div></div>
-<div style="text-align:right"><div style="font-weight:700" id="balance-tron">0.00</div><div style="color:#8892b0;font-size:13px">USDT</div></div>
+<div class="asset-row">
+<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png" alt="USDT" onerror="this.style.display='none'">
+<div class="asset-info"><div class="asset-name">USDT</div><div class="asset-net">Tron • TRC20</div></div>
+<div class="asset-bal"><div class="asset-amt" id="balance-tron">0.00</div><div class="asset-usd">$<span id="usd-tron">0.00</span></div></div>
 </div>
-<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
-<div><div style="font-weight:600">🟡 BSC</div><div style="color:#8892b0;font-size:13px">BEP20</div></div>
-<div style="text-align:right"><div style="font-weight:700" id="balance-bsc">0.00</div><div style="color:#8892b0;font-size:13px">USDT</div></div>
+<div class="asset-row">
+<img class="asset-logo" src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/usdt.png" alt="USDT" onerror="this.style.display='none'">
+<div class="asset-info"><div class="asset-name">USDT</div><div class="asset-net">BSC • BEP20</div></div>
+<div class="asset-bal"><div class="asset-amt" id="balance-bsc">0.00</div><div class="asset-usd">$<span id="usd-bsc">0.00</span></div></div>
 </div>
 </div>
-
+</div>
+<div class="section" id="deposit-section">
+<div class="section-title">📥 ငွေသွင်းမယ်</div>
 <div class="card">
-<h3 style="margin-bottom:12px">📥 ငွေသွင်းမယ် (Deposit)</h3>
 <select id="deposit-chain" onchange="loadDepositAddress()">
 <option value="tron">Tron (TRC20)</option>
 <option value="bsc">BSC (BEP20)</option>
 </select>
-<div class="address-box" id="deposit-address">Loading...</div>
-<button class="btn btn-secondary" onclick="copyDepositAddress()">📋 ကူးယူမယ်</button>
-<p style="color:#8892b0;font-size:13px">အထက်ပါ address ကို USDT လွှဲထည့်ပါ</p>
+<div class="addr-box" id="deposit-address">Loading...</div>
+<button class="btn btn-secondary" onclick="copyDepositAddress()">📋 လိပ်စာကူးယူမယ်</button>
+<p class="hint">အထက်ပါ လိပ်စာကို USDT လွှဲထည့်ပါ</p>
 </div>
-
-<div class="card">
-<h3 style="margin-bottom:12px">📤 လွှဲမယ်</h3>
-<button class="btn btn-primary" onclick="showScreen('screen-transfer')">👥 အချင်းချင်း (Free)</button>
-<button class="btn btn-secondary" onclick="showScreen('screen-withdraw')">🏦 အပြင်ထုတ် (Fee)</button>
 </div>
-
+<div class="section">
 <button class="btn btn-secondary" onclick="doLogout()">🚪 Logout</button>
 </div>
-<div class="nav-bar">
-<div class="nav-item active" onclick="showScreen('screen-main')"><span class="icon">💰</span>Wallet</div>
-<div class="nav-item" onclick="showScreen('screen-history')"><span class="icon">📜</span>မှတ်တမ်း</div>
+</div>
+<div class="nav">
+<div class="nav-item active" onclick="showScreen('screen-main')"><span class="ico">💰</span>Wallet</div>
+<div class="nav-item" onclick="showScreen('screen-transfer')"><span class="ico">📤</span>လွှဲမယ်</div>
+<div class="nav-item" onclick="showScreen('screen-history')"><span class="ico">📜</span>မှတ်တမ်း</div>
 </div>
 </div>
 
 <!-- Transfer -->
-<div id="screen-transfer" class="content hidden">
-<h2>👥 အချင်းချင်း လွှဲမယ် (Free)</h2>
-<input id="transfer-to" placeholder="Username သို့မဟုတ် Acc ID">
+<div id="screen-transfer" class="hidden">
+<div style="padding:20px">
+<h2 style="margin-bottom:20px">👥 အချင်းချင်း လွှဲမယ် <span style="color:var(--green);font-size:14px">Free</span></h2>
+<input id="transfer-to" placeholder="Username သို့မဟုတ် UID">
 <select id="transfer-chain">
-<option value="tron">Tron</option>
-<option value="bsc">BSC</option>
+<option value="tron">Tron (TRC20)</option>
+<option value="bsc">BSC (BEP20)</option>
 </select>
-<input id="transfer-amount" type="number" placeholder="USDT ပမာဏ">
+<input id="transfer-amount" type="number" placeholder="USDT ပမာဏ" min="0" step="0.01">
 <button class="btn btn-primary" onclick="doTransfer()">လွှဲမယ် (Free)</button>
 <button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
 </div>
+</div>
 
 <!-- Withdraw -->
-<div id="screen-withdraw" class="content hidden">
-<h2>🏦 အပြင်ထုတ်မယ်</h2>
+<div id="screen-withdraw" class="hidden">
+<div style="padding:20px">
+<h2 style="margin-bottom:20px">🏦 အပြင်ထုတ်မယ်</h2>
 <select id="withdraw-chain">
 <option value="tron">Tron (fee: 2 USDT)</option>
 <option value="bsc">BSC (fee: 1 USDT)</option>
 </select>
 <input id="withdraw-address" placeholder="လိပ်စာ">
-<input id="withdraw-amount" type="number" placeholder="USDT ပမာဏ">
+<input id="withdraw-amount" type="number" placeholder="USDT ပမာဏ" min="0" step="0.01">
 <button class="btn btn-primary" onclick="doWithdraw()">ထုတ်မယ်</button>
 <button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
 </div>
+</div>
 
 <!-- History -->
-<div id="screen-history" class="content hidden">
-<h2>📜 မှတ်တမ်း</h2>
+<div id="screen-history" class="hidden">
+<div style="padding:20px">
+<h2 style="margin-bottom:20px">📜 မှတ်တမ်း</h2>
 <div id="history-list"></div>
 <button class="btn btn-secondary" onclick="showScreen('screen-main')">← နောက်သို့</button>
 </div>
+</div>
+
 </div>
 
 <div id="toast"></div>
@@ -178,10 +221,10 @@ input:focus{outline:none;border-color:#667eea}
 <button class="btn btn-secondary" id="confirm-no">မလုပ်တော့ဘူး</button>
 </div>
 </div>
+
 <script>
 const API = 'https://mywallet-backend.zawminhtet723.workers.dev';
 
-// Custom toast (no domain popup)
 function toast(msg, isError = false) {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -190,7 +233,6 @@ function toast(msg, isError = false) {
   setTimeout(() => el.classList.remove('show'), 3000);
 }
 
-// Custom confirm (no domain popup)
 function customConfirm(msg) {
   return new Promise(resolve => {
     document.getElementById('confirm-msg').textContent = msg;
@@ -207,12 +249,12 @@ function customConfirm(msg) {
 }
 
 function showScreen(id) {
-  document.querySelectorAll('.content').forEach(el => el.classList.add('hidden'));
-  document.getElementById('screen-main').classList.add('hidden');
+  ['screen-welcome','screen-register','screen-main','screen-transfer','screen-withdraw','screen-history'].forEach(s => {
+    document.getElementById(s).classList.add('hidden');
+  });
   document.getElementById(id).classList.remove('hidden');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   if (id === 'screen-main') {
-    const inner = document.getElementById('screen-main').querySelector('.content');
-    if (inner) inner.classList.remove('hidden');
     loadBalances();
   }
   if (id === 'screen-history') loadHistory();
@@ -250,7 +292,7 @@ async function doRegister() {
     setToken(data.token);
     localStorage.setItem('mw_username', data.username);
     localStorage.setItem('mw_acc_id', data.acc_id || '');
-    toast('Account ID: ' + (data.acc_id || '') + ' — မှတ်ထားပါ!');
+    toast('UID: ' + (data.acc_id || '') + ' — မှတ်ထားပါ!');
     showScreen('screen-main');
   } catch (e) { toast(e.message, true); }
 }
@@ -285,6 +327,8 @@ async function loadBalances() {
       total += amt;
       const el = document.getElementById('balance-' + b.chain);
       if (el) el.textContent = amt.toFixed(2);
+      const usdEl = document.getElementById('usd-' + b.chain);
+      if (usdEl) usdEl.textContent = amt.toFixed(2);
     }
     document.getElementById('balance-total').textContent = total.toFixed(2);
     document.getElementById('balance-total-usdt').textContent = total.toFixed(2);
@@ -294,23 +338,11 @@ async function loadBalances() {
   }
 }
 
-function copyUid() {
-  const uid = localStorage.getItem('mw_acc_id') || '';
-  const ta = document.createElement('textarea');
-  ta.value = uid;
-  ta.style.position = 'fixed'; ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand('copy'); toast('UID ကူးယူပြီးပြီ! ✅'); }
-  catch (e) { toast('UID: ' + uid); }
-  document.body.removeChild(ta);
-}
-
 async function loadDepositAddress() {
   const chain = document.getElementById('deposit-chain').value;
   try {
     const data = await api('/api/deposit-address?chain=' + chain);
-    document.getElementById('deposit-address').textContent = data.address || 'Address မရှိသေးပါ - Admin ကို ဆက်သွယ်ပါ';
+    document.getElementById('deposit-address').textContent = data.address || 'Address မရှိသေးပါ';
   } catch (e) {
     document.getElementById('deposit-address').textContent = 'Error';
   }
@@ -324,7 +356,7 @@ function copyDepositAddress() {
   document.body.appendChild(ta);
   ta.select();
   try { document.execCommand('copy'); toast('ကူးယူပြီးပြီ! ✅'); }
-  catch (e) { prompt('ကူးပါ:', addr); }
+  catch (e) { toast(addr); }
   document.body.removeChild(ta);
 }
 
@@ -337,6 +369,8 @@ async function doTransfer() {
     const body = /^\d+$/.test(to) ? { to_acc_id: to, chain, amount } : { to_username: to, chain, amount };
     const data = await api('/api/transfer', 'POST', body);
     toast(data.message);
+    document.getElementById('transfer-to').value = '';
+    document.getElementById('transfer-amount').value = '';
     showScreen('screen-main');
   } catch (e) { toast(e.message, true); }
 }
@@ -349,6 +383,8 @@ async function doWithdraw() {
   try {
     const data = await api('/api/withdraw', 'POST', { chain, address, amount });
     toast(data.message);
+    document.getElementById('withdraw-address').value = '';
+    document.getElementById('withdraw-amount').value = '';
     showScreen('screen-main');
   } catch (e) { toast(e.message, true); }
 }
@@ -356,19 +392,23 @@ async function doWithdraw() {
 async function loadHistory() {
   try {
     const data = await api('/api/history');
-    let html = '<h3>Transfer</h3>';
-    for (const t of data.transfers.slice(0, 10)) {
-      html += `<div class="tx-item">${t.amount} USDT → ${t.to_username}<br><small>${t.at}</small></div>`;
+    let html = '';
+    if (data.transfers.length) {
+      html += '<div class="section-title">အချင်းချင်း</div>';
+      for (const t of data.transfers.slice(0, 10)) {
+        html += `<div class="card" style="margin-bottom:8px"><div>📤 ${t.amount} USDT → ${t.to_username}</div><div class="hint">${t.at}</div></div>`;
+      }
     }
-    html += '<h3 style="margin-top:16px">Withdraw</h3>';
-    for (const w of data.withdrawals.slice(0, 10)) {
-      html += `<div class="tx-item">${w.amount} USDT (fee ${w.fee}) → ${w.address.slice(0, 12)}...<br><small>${w.status} - ${w.at}</small></div>`;
+    if (data.withdrawals.length) {
+      html += '<div class="section-title" style="margin-top:16px">အပြင်ထုတ်</div>';
+      for (const w of data.withdrawals.slice(0, 10)) {
+        html += `<div class="card" style="margin-bottom:8px"><div>🏦 ${w.amount} USDT <span class="hint">(fee ${w.fee})</span></div><div class="hint">${w.status} • ${w.at}</div></div>`;
+      }
     }
-    document.getElementById('history-list').innerHTML = html || '<p>မှတ်တမ်းမရှိ</p>';
+    document.getElementById('history-list').innerHTML = html || '<p class="hint">မှတ်တမ်းမရှိ</p>';
   } catch (e) { toast(e.message, true); }
 }
 
-// Auto-login if token exists
 if (getToken()) {
   showScreen('screen-main');
 }
