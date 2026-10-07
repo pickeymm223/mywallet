@@ -145,6 +145,23 @@ input:focus,textarea:focus{outline:none;border-color:#667eea}
 </div>
 </div>
 
+<script>
+// UI navigation - defined globally (not in module) so onclick works even if crypto libs fail
+function showScreen(id) {
+  document.querySelectorAll('.content').forEach(el => el.classList.add('hidden'));
+  document.getElementById('screen-main').classList.add('hidden');
+  const el = document.getElementById(id);
+  el.classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+function showTab(tab) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  event.target.closest('.nav-item').classList.add('active');
+  if (tab === 'wallet') showScreen('screen-main');
+  else if (tab === 'send') { if (window.initSendScreen) initSendScreen(); showScreen('screen-send'); }
+  else if (tab === 'receive') { if (window.initReceiveScreen) initReceiveScreen(); showScreen('screen-receive'); }
+}
+</script>
 <script type="importmap">
 {"imports":{
 "bip39":"https://esm.sh/bip39@3.1.0",

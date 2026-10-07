@@ -21,27 +21,6 @@ const CHAINS = {
 let currentMnemonic = null;
 let walletData = null;
 
-// Screen navigation
-window.showScreen = function(id) {
-  document.querySelectorAll('.content').forEach(el => el.classList.add('hidden'));
-  document.getElementById('screen-main').classList.add('hidden');
-  const el = document.getElementById(id);
-  if (id === 'screen-main') {
-    el.classList.remove('hidden');
-  } else {
-    el.classList.remove('hidden');
-  }
-  window.scrollTo(0, 0);
-};
-
-window.showTab = function(tab) {
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  event.target.closest('.nav-item').classList.add('active');
-  if (tab === 'wallet') showScreen('screen-main');
-  else if (tab === 'send') { initSendScreen(); showScreen('screen-send'); }
-  else if (tab === 'receive') { initReceiveScreen(); showScreen('screen-receive'); }
-};
-
 // Generate new mnemonic
 async function initCreate() {
   currentMnemonic = bip39.generateMnemonic();
@@ -221,7 +200,7 @@ window.selectChain = function(key) {
 };
 
 // Send screen
-function initSendScreen() {
+window.initSendScreen = function() {
   document.getElementById('sendChain').innerHTML = Object.entries(CHAINS)
     .map(([k, c]) => `<option value="${k}">${c.name} (${c.symbol})</option>`).join('');
 }
@@ -249,7 +228,7 @@ window.sendCrypto = async function() {
 };
 
 // Receive screen
-function initReceiveScreen() {
+window.initReceiveScreen = function() {
   document.getElementById('receiveChain').innerHTML = Object.entries(CHAINS)
     .map(([k, c]) => `<option value="${k}">${c.name}</option>`).join('');
   updateReceiveAddress();
