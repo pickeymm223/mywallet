@@ -246,19 +246,37 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 <div class="header">
 <span style="cursor:pointer;font-size:20px" onclick="closeAsset()">←</span>
 <h1 style="font-size:18px" id="asset-modal-title">USDT</h1>
-<span></span>
+<span style="font-size:20px">⭐</span>
 </div>
 <div class="content">
-<div style="text-align:center;padding:20px">
-<img id="asset-modal-logo" src="" style="width:48px;height:48px;border-radius:50%;margin-bottom:8px">
-<div style="font-size:32px;font-weight:700"><span id="asset-modal-balance">0.00</span> <span style="font-size:18px;color:var(--muted)" id="asset-modal-cur">USDT</span></div>
-<div class="hint" id="asset-modal-network"></div>
+<div style="padding:16px;display:flex;align-items:center;justify-content:space-between">
+<div style="display:flex;align-items:center;gap:10px">
+<img id="asset-modal-logo" src="" style="width:40px;height:40px;border-radius:50%">
+<span style="font-size:20px;font-weight:700" id="asset-modal-cur2">USDT</span>
+</div>
+<div style="text-align:right">
+<div style="font-size:22px;font-weight:700" id="asset-modal-price">$0.00</div>
+<div style="font-size:13px" id="asset-modal-chg"></div>
+</div>
+</div>
+<div style="padding:0 16px"><svg id="price-chart" width="100%" height="160" style="display:block"></svg></div>
+<div style="display:flex;gap:8px;justify-content:center;padding:12px 16px;overflow-x:auto" id="chart-times">
+<button class="time-btn" data-days="1" onclick="setChartTime(1,this)">1H</button>
+<button class="time-btn active" data-days="1" onclick="setChartTime(1,this)">1D</button>
+<button class="time-btn" data-days="7" onclick="setChartTime(7,this)">1W</button>
+<button class="time-btn" data-days="30" onclick="setChartTime(30,this)">1M</button>
+<button class="time-btn" data-days="365" onclick="setChartTime(365,this)">1Y</button>
+</div>
+<div style="padding:0 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<span style="font-size:15px;font-weight:600">Your balance</span>
+<div style="text-align:right"><div style="font-weight:700" id="asset-modal-usd">$0.00</div><div class="hint"><span id="asset-modal-balance">0.00</span> <span id="asset-modal-cur">USDT</span></div></div>
 </div>
 <div class="actions">
 <button class="act-btn" onclick="closeAsset();showScreen('screen-transfer')"><span class="act-circle">↗</span><span class="act-lbl">Send</span></button>
+<button class="act-btn" onclick="document.getElementById('qr-sec').scrollIntoView({behavior:'smooth'})"><span class="act-circle">▦</span><span class="act-lbl">Receive</span></button>
 <button class="act-btn" onclick="closeAsset();showScreen('screen-withdraw')"><span class="act-circle"><img src="https://cdn-icons-png.flaticon.com/512/10167/10167710.png" style="width:24px;height:24px"></span><span class="act-lbl">Withdraw</span></button>
 </div>
-<div class="section">
+<div class="section" id="qr-sec">
 <div class="section-title">📥 လိပ်စာ</div>
 <div class="card">
 <div class="qr-wrap"><img id="asset-modal-qr" src="" alt="QR"></div>
@@ -268,6 +286,10 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 </div>
 </div>
 </div>
+<style>
+.time-btn{background:#1c2333;border:none;color:var(--muted);padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;white-space:nowrap}
+.time-btn.active{background:#2a3348;color:#fff;font-weight:600}
+</style>
 
 <div id="toast"></div>
 <div id="confirm-modal" class="hidden">
@@ -440,24 +462,68 @@ function copyUid() {
   try { document.execCommand('copy'); toast('UID ကူးယူပြီးပြီ! ✅'); } catch (e) { toast('UID: ' + uid); }
   document.body.removeChild(ta);
 }
-let curChain = 'tron', curCur = 'USDT', curAddr = '';
+let curChain = 'tron', curCur = 'USDT', curAddr = '', curGecko = 'tether';
 async function openAsset(chain, cur) {
   curChain = chain; curCur = cur;
   const a = ASSETS.find(x => x.chain === chain && x.cur === cur);
+  curGecko = a ? a.gecko : 'tether';
   document.getElementById('asset-modal-title').textContent = cur;
   document.getElementById('asset-modal-cur').textContent = cur;
+  document.getElementById('asset-modal-cur2').textContent = cur;
   document.getElementById('asset-modal-logo').src = ICON + (a ? a.icon : 'usdt') + '.png';
-  document.getElementById('asset-modal-network').textContent = a ? (a.net + ' network') : chain;
-  document.getElementById('asset-modal-balance').textContent = (BALANCES[chain + ':' + cur] || 0).toFixed(4);
+  const bal = BALANCES[chain + ':' + cur] || 0;
+  document.getElementById('asset-modal-balance').textContent = bal.toFixed(4);
+  const price = PRICES[curGecko];
+  if (price) {
+    document.getElementById('asset-modal-price').textContent = '$' + price.usd.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('asset-modal-usd').textContent = '$' + (bal * price.usd).toFixed(2);
+    const chg = price.chg || 0;
+    const chgEl = document.getElementById('asset-modal-chg');
+    chgEl.textContent = (chg >= 0 ? '+' : '') + '$' + Math.abs(price.usd * chg / 100).toFixed(2) + ' (' + chg.toFixed(1) + '%)';
+    chgEl.style.color = chg >= 0 ? 'var(--green)' : 'var(--red)';
+  }
   document.getElementById('asset-modal-address').textContent = 'Loading...';
   document.getElementById('asset-modal-qr').src = '';
   document.getElementById('asset-modal').classList.remove('hidden');
+  loadChart(1);
   try {
     const data = await api('/api/deposit-address?chain=' + chain);
     curAddr = data.address || '';
     document.getElementById('asset-modal-address').textContent = curAddr || 'Address မရှိ';
     if (curAddr) document.getElementById('asset-modal-qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(curAddr);
   } catch (e) { document.getElementById('asset-modal-address').textContent = 'Error'; }
+}
+
+async function loadChart(days) {
+  const svg = document.getElementById('price-chart');
+  svg.innerHTML = '<text x="50%" y="50%" fill="#8a94a6" text-anchor="middle" font-size="13">Loading...</text>';
+  try {
+    const res = await fetch(`https://api.coingecko.com/api/v3/coins/${curGecko}/market_chart?vs_currency=usd&days=${days}`);
+    const data = await res.json();
+    const prices = data.prices.map(p => p[1]);
+    if (!prices.length) return;
+    const min = Math.min(...prices), max = Math.max(...prices);
+    const range = max - min || 1;
+    const w = 400, h = 160, pad = 8;
+    const pts = prices.map((p, i) => {
+      const x = pad + (i / (prices.length - 1)) * (w - pad * 2);
+      const y = h - pad - ((p - min) / range) * (h - pad * 2);
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }).join(' ');
+    const up = prices[prices.length - 1] >= prices[0];
+    const color = up ? '#0ecb81' : '#f6465d';
+    const area = `${pad},${h} ` + pts + ` ${w - pad},${h}`;
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    svg.innerHTML = `<polygon points="${area}" fill="${color}22"/><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2"/>`;
+  } catch (e) {
+    svg.innerHTML = '<text x="50%" y="50%" fill="#8a94a6" text-anchor="middle" font-size="13">Chart မရပါ</text>';
+  }
+}
+
+function setChartTime(days, btn) {
+  document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadChart(days);
 }
 function closeAsset() { document.getElementById('asset-modal').classList.add('hidden'); }
 function copyAssetAddress() {
